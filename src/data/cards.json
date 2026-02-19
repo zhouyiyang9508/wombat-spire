@@ -286,5 +286,188 @@
     "realm": "炼气期",
     "tags": ["neutral", "pill"],
     "upgraded": { "desc": "抽 2 张牌", "effect": { "draw": 2 } }
+  },
+
+  {
+    "id": "yujian",
+    "name": "御剑术",
+    "type": "attack",
+    "cost": 1,
+    "desc": "造成 8 点伤害",
+    "effect": { "damage": 8 },
+    "rarity": "common",
+    "realm": "炼气期",
+    "tags": ["sword", "attack"],
+    "upgraded": { "desc": "造成 12 点伤害", "effect": { "damage": 12 } }
+  },
+  {
+    "id": "jianqi_changhong",
+    "name": "剑气长虹",
+    "type": "attack",
+    "cost": 2,
+    "desc": "造成 15 点伤害",
+    "effect": { "damage": 15 },
+    "rarity": "uncommon",
+    "realm": "炼气期",
+    "tags": ["sword", "attack"],
+    "upgraded": { "desc": "造成 20 点伤害", "effect": { "damage": 20 } }
+  },
+  {
+    "id": "jianzhen",
+    "name": "剑阵",
+    "type": "skill",
+    "cost": 1,
+    "desc": "获得 3 点护盾，获得 1 点力量",
+    "effect": { "block": 3, "strength": 1 },
+    "rarity": "uncommon",
+    "realm": "炼气期",
+    "tags": ["sword", "skill"],
+    "upgraded": { "desc": "获得 5 点护盾，获得 1 点力量", "effect": { "block": 5, "strength": 1 } }
+  },
+  {
+    "id": "wuying_jianfa",
+    "name": "无影剑法",
+    "type": "attack",
+    "cost": 0,
+    "desc": "造成 5 点伤害，下一张剑修牌费用-1",
+    "effect": { "damage": 5, "swordDiscount": 1 },
+    "rarity": "uncommon",
+    "realm": "炼气期",
+    "tags": ["sword", "attack"],
+    "upgraded": { "desc": "造成 8 点伤害，下一张剑修牌费用-1", "effect": { "damage": 8, "swordDiscount": 1 } }
+  },
+  {
+    "id": "jianxin_tongming",
+    "name": "剑心通明",
+    "type": "skill",
+    "cost": 1,
+    "desc": "抽 2 张牌",
+    "effect": { "draw": 2 },
+    "rarity": "common",
+    "realm": "炼气期",
+    "tags": ["sword", "skill"],
+    "upgraded": { "desc": "抽 3 张牌", "effect": { "draw": 3 } }
+  },
+
+  {
+    "id": "huofu",
+    "name": "火符",
+    "type": "attack",
+    "cost": 1,
+    "desc": "造成 10 点伤害，施加 1 层灼烧",
+    "effect": { "damage": 10, "burn": 1 },
+    "rarity": "common",
+    "realm": "炼气期",
+    "tags": ["talisman", "attack", "fire"],
+    "upgraded": { "desc": "造成 14 点伤害，施加 2 层灼烧", "effect": { "damage": 14, "burn": 2 } }
+  },
+  {
+    "id": "bingfeng_fu",
+    "name": "冰封符",
+    "type": "attack",
+    "cost": 1,
+    "desc": "造成 8 点伤害，施加 1 层冰冻",
+    "effect": { "damage": 8, "frozen": 1 },
+    "rarity": "uncommon",
+    "realm": "炼气期",
+    "tags": ["talisman", "attack", "ice"],
+    "upgraded": { "desc": "造成 12 点伤害，施加 1 层冰冻", "effect": { "damage": 12, "frozen": 1 } }
+  },
+  {
+    "id": "hushen_fu",
+    "name": "护身符",
+    "type": "skill",
+    "cost": 1,
+    "desc": "获得 12 点护盾",
+    "effect": { "block": 12 },
+    "rarity": "common",
+    "realm": "炼气期",
+    "tags": ["talisman", "skill"],
+    "upgraded": { "desc": "获得 16 点护盾", "effect": { "block": 16 } }
+  },
+  {
+    "id": "qungong_fu",
+    "name": "群攻符",
+    "type": "attack",
+    "cost": 2,
+    "desc": "对所有敌人各造成 6 点伤害",
+    "effect": { "allDamage": 6 },
+    "rarity": "uncommon",
+    "realm": "炼气期",
+    "tags": ["talisman", "attack"],
+    "upgraded": { "desc": "对所有敌人各造成 9 点伤害", "effect": { "allDamage": 9 } }
+  },
+  {
+    "id": "juling_fu",
+    "name": "聚灵符",
+    "type": "skill",
+    "cost": 0,
+    "desc": "回复 2 点灵气",
+    "effect": { "energy": 2 },
+    "rarity": "uncommon",
+    "realm": "炼气期",
+    "tags": ["talisman", "skill"],
+    "upgraded": { "desc": "回复 2 点灵气，抽 1 张牌", "effect": { "energy": 2, "draw": 1 } }
+  },
+
+  {
+    "id": "duwu",
+    "name": "毒雾",
+    "type": "attack",
+    "cost": 1,
+    "desc": "造成 3 点伤害，施加 3 层毒",
+    "effect": { "damage": 3, "poison": 3 },
+    "rarity": "common",
+    "realm": "炼气期",
+    "tags": ["poison", "attack"],
+    "upgraded": { "desc": "造成 5 点伤害，施加 4 层毒", "effect": { "damage": 5, "poison": 4 } }
+  },
+  {
+    "id": "gudu_qianghua",
+    "name": "蛊毒强化",
+    "type": "skill",
+    "cost": 1,
+    "desc": "所有中毒敌人毒层+2",
+    "effect": { "boostPoison": 2 },
+    "rarity": "uncommon",
+    "realm": "炼气期",
+    "tags": ["poison", "skill"],
+    "upgraded": { "desc": "所有中毒敌人毒层+3", "effect": { "boostPoison": 3 } }
+  },
+  {
+    "id": "shixin_gu",
+    "name": "噬心蛊",
+    "type": "attack",
+    "cost": 2,
+    "desc": "造成 8 点伤害，施加 5 层毒",
+    "effect": { "damage": 8, "poison": 5 },
+    "rarity": "uncommon",
+    "realm": "炼气期",
+    "tags": ["poison", "attack"],
+    "upgraded": { "desc": "造成 11 点伤害，施加 7 层毒", "effect": { "damage": 11, "poison": 7 } }
+  },
+  {
+    "id": "duyan_miman",
+    "name": "毒烟弥漫",
+    "type": "skill",
+    "cost": 1,
+    "desc": "全体敌人+2层毒",
+    "effect": { "allPoison": 2 },
+    "rarity": "common",
+    "realm": "炼气期",
+    "tags": ["poison", "skill"],
+    "upgraded": { "desc": "全体敌人+3层毒", "effect": { "allPoison": 3 } }
+  },
+  {
+    "id": "duhua_hudun",
+    "name": "毒化护盾",
+    "type": "skill",
+    "cost": 1,
+    "desc": "获得等于目标毒层数的护盾",
+    "effect": { "poisonShield": true },
+    "rarity": "uncommon",
+    "realm": "炼气期",
+    "tags": ["poison", "skill"],
+    "upgraded": { "desc": "获得等于目标毒层数的护盾，抽1张牌", "effect": { "poisonShield": true, "draw": 1 } }
   }
 ]

@@ -54,7 +54,10 @@ export class Player {
   }
 
   startTurn() {
-    this.block = 0;
+    // Retain shield if player has the relic or effect
+    if (!this.hasRelic('retain_shield') && !this.effects.has('retainBlock')) {
+      this.block = 0;
+    }
     this.energy = this.maxEnergy;
     this.turnCount++;
 
@@ -119,14 +122,25 @@ export class Player {
   }
 
   getEffectiveCost(card) {
-    return Math.max(0, card.cost + this.getCardCostModifier(card));
+    let mod = this.getCardCostModifier(card);
+    // Sword discount from 无影剑法
+    if (this._nextSwordDiscount && card.tags && card.tags.includes('sword')) {
+      mod -= this._nextSwordDiscount;
+      this._nextSwordDiscount = 0;
+    }
+    return Math.max(0, card.cost + mod);
   }
 
   getExtraDamage(card) {
     let extra = this.effects.get('strength');
     if (this.faction === 'demonic' && this.firstTurn) extra += 1;
-    if (this.effects.has('weak')) extra -= Math.floor((card.effect.damage || 0) * 0.25);
     return extra;
+  }
+
+  // Calculate final damage for a card hit, including weak multiplier
+  calcDamage(baseDamage, extraDmg = 0, multiplier = 1) {
+    const weakMult = this.effects.has('weak') ? 0.75 : 1;
+    return Math.max(0, Math.floor((baseDamage + extraDmg) * weakMult * multiplier));
   }
 
   // Realm breakthrough

@@ -62,6 +62,8 @@ export class Effects {
       poison: { icon: '☠️', name: '中毒', color: '#40ff40' },
       burn: { icon: '🔥', name: '点燃', color: '#ff8020' },
       strength: { icon: '💪', name: '力量', color: '#ffcc00' },
+      frozen: { icon: '🧊', name: '冰冻', color: '#88ccff' },
+      retainBlock: { icon: '🔒', name: '护盾保留', color: '#4488ff' },
     };
     return Object.entries(this.effects)
       .filter(([, v]) => v > 0)

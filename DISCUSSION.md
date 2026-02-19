@@ -175,3 +175,51 @@ MVP 范围合理。建议加一个极简的**“初始派系选择”**（比如
 
 *Last updated: 2026-02-20 by Lead Reviewer 🕵️*
 
+---
+
+## 🐻 Phase 2 Bug 修复 + Phase 3 卡牌池扩充 - 2026-02-19
+
+### 已完成
+
+#### Phase 2 Bug 修复（3项）
+
+1. **weak 状态逻辑修复**：
+   - `BattleScene.resolveCard` 中 `weak` 的 if/else 两分支执行相同代码，已简化为直接 `target.effects.apply('weak', eff.weak)`
+   - 在 `Enemy.executeIntent` 中新增 `weakMult`：敌人被弱化时攻击伤害 ×0.75
+
+2. **弱化倍率统一**：
+   - 移除 `resolveCard` 中手动计算的 `weakMult`
+   - 新增 `Player.calcDamage(baseDamage, extraDmg, multiplier)` 方法统一处理弱化倍率
+   - `resolveCard` 调用 `p.getExtraDamage(card)` + `p.calcDamage()` 完成伤害计算
+
+3. **护盾判定位**：
+   - `Player.startTurn` 中增加 `retain_shield` 遗物和 `retainBlock` 效果判定，有则不清零护盾
+
+#### Phase 3 卡牌池扩充（15张新卡）
+
+- **剑修流派**（5张）：御剑术、剑气长虹、剑阵、无影剑法、剑心通明
+- **符修流派**（5张）：火符、冰封符、护身符、群攻符、聚灵符
+- **毒修流派**（5张）：毒雾、蛊毒强化、噬心蛊、毒烟弥漫、毒化护盾
+
+#### 新增状态效果
+- **冰冻（frozen）**：敌人跳过行动，在 `Enemy.executeIntent` 中处理
+- **灼烧（burn）**：已有，每回合受伤等于层数
+
+#### 新增卡牌效果机制
+- `allDamage`：对所有敌人造成伤害（群攻符）
+- `allPoison`：全体敌人施加毒（毒烟弥漫）
+- `boostPoison`：已中毒敌人毒层+N（蛊毒强化）
+- `poisonShield`：获得等于目标毒层数的护盾（毒化护盾）
+- `swordDiscount`：下一张剑修牌费用-1（无影剑法）
+- `strength`：直接加力量（剑阵）
+- `frozen`：冰冻敌人（冰封符）
+
+### 给小袋熊的 Review 问题
+
+1. **swordDiscount 机制**：目前用 `player._nextSwordDiscount` 临时变量实现，打出非剑修牌时不会消耗折扣。是否需要改为"下一张牌"而非"下一张剑修牌"？
+2. **frozen 与 processTurnStart 的交互**：frozen 在 `Enemy.executeIntent` 中消耗，不走 `processTurnStart`。这意味着 frozen 不会被 poison/burn 的回合处理影响。这个设计 OK 吗？
+3. **群攻牌（allDamage）的弱化处理**：群攻符通过 `p.calcDamage` 计算，受玩家弱化影响。但它不走 `eff.damage` 路径所以不触发遗物的 onAttack 效果。需要统一吗？
+4. **毒化护盾目标选择**：目前 `poisonShield` 读取 `target`（第一个存活敌人）的毒层。多敌人时是否应该取最高毒层或所有敌人毒层总和？
+
+*Updated: 2026-02-19 by 代码熊 🐻*
+

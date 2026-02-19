@@ -52,12 +52,23 @@ export class Enemy {
   executeIntent(player) {
     const intent = this.currentIntent;
     const results = [];
+
+    // Frozen: skip turn
+    if (this.effects.has('frozen')) {
+      this.effects.decrement('frozen');
+      results.push({ type: 'debuff', desc: '冰冻中，跳过行动' });
+      this.chooseNextIntent();
+      return results;
+    }
+
+    // Weak: reduce attack damage by 25%
+    const weakMult = this.effects.has('weak') ? 0.75 : 1;
     const str = this.effects.get('strength');
 
     if (intent.type === 'attack') {
       const hits = intent.hits || 1;
       for (let i = 0; i < hits; i++) {
-        const dmg = Math.max(0, intent.value + str);
+        const dmg = Math.max(0, Math.floor((intent.value + str) * weakMult));
         const r = player.takeDamage(dmg);
         results.push({ type: 'damage', value: dmg, ...r });
       }

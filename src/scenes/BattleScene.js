@@ -308,8 +308,7 @@ export class BattleScene extends Phaser.Scene {
 
     if (eff.damage) {
       const hits = eff.hits || 1;
-      let extraDmg = p.effects.get('strength');
-      if (p.faction === 'demonic' && p.firstTurn) extraDmg += 1;
+      let extraDmg = p.getExtraDamage(card);
 
       // Boss damage bonus (破阵玉符)
       let bossMultiplier = 1;
@@ -323,10 +322,8 @@ export class BattleScene extends Phaser.Scene {
         }
       }
 
-      const weakMult = p.effects.has('weak') ? 0.75 : 1;
-
       for (let i = 0; i < hits; i++) {
-        const baseDmg = Math.max(0, Math.floor((eff.damage + extraDmg + fireBonus) * weakMult * bossMultiplier));
+        const baseDmg = p.calcDamage(eff.damage + fireBonus, extraDmg, bossMultiplier);
         const r = target.takeDamage(baseDmg);
         this.addLog(`${card.name}: ${baseDmg} 伤害${r.blocked > 0 ? `（${r.blocked} 格挡）` : ''}`);
         if (r.killed && eff.killBurst) {
@@ -359,14 +356,46 @@ export class BattleScene extends Phaser.Scene {
     if (eff.draw) this.cardSystem.drawCards(eff.draw);
     if (eff.energy) p.energy += eff.energy;
     if (eff.weak && target) {
-      if (!p.hasStatusImmunity || !p.hasStatusImmunity()) target.effects.apply('weak', eff.weak);
-      else target.effects.apply('weak', eff.weak);
+      target.effects.apply('weak', eff.weak);
     }
     if (eff.vulnerable && target) target.effects.apply('vulnerable', eff.vulnerable);
     if (eff.poison && target) target.effects.apply('poison', eff.poison);
     if (eff.burn && target) target.effects.apply('burn', eff.burn);
     if (eff.selfDamage) p.takeDirectDamage(eff.selfDamage);
     if (eff.selfBurn) p.effects.apply('burn', eff.selfBurn);
+    if (eff.frozen && target) { target.effects.apply('frozen', eff.frozen); this.addLog(`${card.name}: 施加 ${eff.frozen} 层冰冻`); }
+    if (eff.strength) { p.effects.apply('strength', eff.strength); this.addLog(`${card.name}: +${eff.strength} 力量`); }
+    if (eff.allDamage) {
+      const extraDmg = p.getExtraDamage(card);
+      this.enemies.forEach(e => {
+        if (e.isAlive()) {
+          const dmg = p.calcDamage(eff.allDamage, extraDmg);
+          e.takeDamage(dmg);
+          this.addLog(`${card.name}: 对 ${e.name} 造成 ${dmg} 伤害`);
+        }
+      });
+    }
+    if (eff.allPoison) {
+      this.enemies.forEach(e => {
+        if (e.isAlive()) e.effects.apply('poison', eff.allPoison);
+      });
+      this.addLog(`${card.name}: 全体敌人 +${eff.allPoison} 毒`);
+    }
+    if (eff.boostPoison) {
+      this.enemies.forEach(e => {
+        if (e.isAlive() && e.effects.has('poison')) {
+          e.effects.apply('poison', eff.boostPoison);
+        }
+      });
+      this.addLog(`${card.name}: 所有中毒敌人毒层 +${eff.boostPoison}`);
+    }
+    if (eff.poisonShield && target) {
+      const stacks = target.effects.get('poison');
+      if (stacks > 0) { p.addBlock(stacks); this.addLog(`${card.name}: +${stacks} 护盾（来自毒层）`); }
+    }
+    if (eff.swordDiscount) {
+      p._nextSwordDiscount = (p._nextSwordDiscount || 0) + eff.swordDiscount;
+    }
   }
 
   refreshUI() {
