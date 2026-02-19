@@ -72,29 +72,91 @@ export class RestScene extends Phaser.Scene {
       return;
     }
 
-    let x = 60, y = 90;
-    upgradeable.forEach(card => {
-      const upg = card.upgraded;
-      const btn = this.add.text(x, y, `${card.name}\n${card.desc}\n→ ${upg.desc}`, {
-        fontSize: '13px', color: '#ccc', fontFamily: 'serif',
-        backgroundColor: '#1a1a2e', padding: { x: 10, y: 8 },
-        wordWrap: { width: 170 },
-      }).setInteractive({ useHandCursor: true });
+    // Pagination setup
+    const cardsPerPage = 8;
+    const cols = 4;
+    const cardW = 200;
+    const cardH = 120;
+    const gapX = 16;
+    const gapY = 16;
+    const startY = 90;
+    let page = 0;
+    const totalPages = Math.ceil(upgradeable.length / cardsPerPage);
 
-      btn.on('pointerover', () => btn.setColor('#ffcc44'));
-      btn.on('pointerout', () => btn.setColor('#ccc'));
-      btn.on('pointerdown', () => {
-        // Apply upgrade
-        card.desc = upg.desc;
-        card.effect = { ...upg.effect };
-        card.isUpgraded = true;
-        card.name = card.name + '+';
-        this._showResult(`${card.name} 升级成功！\n${card.desc}`);
+    const cardContainer = this.add.container(0, 0);
+
+    const renderPage = () => {
+      cardContainer.removeAll(true);
+      const start = page * cardsPerPage;
+      const pageCards = upgradeable.slice(start, start + cardsPerPage);
+      const totalW = Math.min(pageCards.length, cols) * (cardW + gapX) - gapX;
+      const baseX = (w - totalW) / 2;
+
+      pageCards.forEach((card, i) => {
+        const col = i % cols;
+        const row = Math.floor(i / cols);
+        const cx = baseX + col * (cardW + gapX);
+        const cy = startY + row * (cardH + gapY);
+        const upg = card.upgraded;
+
+        const bg = this.add.rectangle(cx + cardW / 2, cy + cardH / 2, cardW, cardH, 0x1a1a2e)
+          .setStrokeStyle(1, 0x444466);
+
+        const nameText = this.add.text(cx + 8, cy + 6, card.name, {
+          fontSize: '14px', color: '#ffcc44', fontFamily: 'serif', fontStyle: 'bold',
+        });
+
+        const descText = this.add.text(cx + 8, cy + 26, card.desc, {
+          fontSize: '11px', color: '#aaa', fontFamily: 'serif',
+          wordWrap: { width: cardW - 16 },
+        });
+
+        const arrowText = this.add.text(cx + 8, cy + 50, `→ ${upg.desc}`, {
+          fontSize: '12px', color: '#66ff66', fontFamily: 'serif',
+          wordWrap: { width: cardW - 16 },
+        });
+
+        const costText = this.add.text(cx + cardW - 8, cy + 6, `${card.cost}💎`, {
+          fontSize: '12px', color: '#88aaff', fontFamily: 'serif',
+        }).setOrigin(1, 0);
+
+        const hitArea = this.add.rectangle(cx + cardW / 2, cy + cardH / 2, cardW, cardH, 0x000000, 0)
+          .setInteractive({ useHandCursor: true });
+
+        hitArea.on('pointerover', () => bg.setFillStyle(0x2a2a4e));
+        hitArea.on('pointerout', () => bg.setFillStyle(0x1a1a2e));
+        hitArea.on('pointerdown', () => {
+          card.desc = upg.desc;
+          card.effect = { ...upg.effect };
+          card.isUpgraded = true;
+          card.name = card.name + '+';
+          this._showResult(`${card.name} 升级成功！\n${card.desc}`);
+        });
+
+        cardContainer.add([bg, nameText, descText, arrowText, costText, hitArea]);
       });
 
-      x += 190;
-      if (x > w - 100) { x = 60; y += 100; }
-    });
+      // Page indicator
+      if (totalPages > 1) {
+        const pageText = this.add.text(w / 2, startY + 2 * (cardH + gapY) + 20,
+          `第 ${page + 1}/${totalPages} 页  (← →翻页)`, {
+          fontSize: '14px', color: '#888', fontFamily: 'serif',
+        }).setOrigin(0.5);
+        cardContainer.add(pageText);
+      }
+    };
+
+    renderPage();
+
+    // Keyboard pagination
+    if (totalPages > 1) {
+      this.input.keyboard.on('keydown-LEFT', () => {
+        if (page > 0) { page--; renderPage(); }
+      });
+      this.input.keyboard.on('keydown-RIGHT', () => {
+        if (page < totalPages - 1) { page++; renderPage(); }
+      });
+    }
 
     const cancel = this.add.text(w / 2, h - 50, '返回', {
       fontSize: '18px', color: '#aaa', fontFamily: 'serif',
