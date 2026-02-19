@@ -66,6 +66,47 @@
     "pattern": "sequential"
   },
   {
+    "id": "blood_bat",
+    "name": "血蝠夜叉",
+    "hp": 55,
+    "type": "elite",
+    "intents": [
+      { "type": "attack", "value": 12 },
+      { "type": "attack", "value": 6, "hits": 3 },
+      { "type": "buff", "effect": { "strength": 3 }, "desc": "嗜血狂化" },
+      { "type": "debuff", "effect": { "weak": 2 }, "desc": "尖啸" },
+      { "type": "attack", "value": 20 }
+    ],
+    "pattern": "sequential"
+  },
+  {
+    "id": "stone_golem",
+    "name": "石灵傀儡",
+    "hp": 70,
+    "type": "elite",
+    "intents": [
+      { "type": "defend", "value": 15 },
+      { "type": "attack", "value": 18 },
+      { "type": "defend", "value": 12 },
+      { "type": "attack", "value": 10, "hits": 2 },
+      { "type": "buff", "effect": { "strength": 2 }, "desc": "岩甲强化" }
+    ],
+    "pattern": "sequential"
+  },
+  {
+    "id": "fox_enchantress",
+    "name": "九尾狐仙",
+    "hp": 50,
+    "type": "elite",
+    "intents": [
+      { "type": "debuff", "effect": { "vulnerable": 2 }, "desc": "魅惑之术" },
+      { "type": "attack", "value": 15 },
+      { "type": "debuff", "effect": { "weak": 2, "vulnerable": 1 }, "desc": "九尾迷障" },
+      { "type": "attack", "value": 8, "hits": 3 }
+    ],
+    "pattern": "sequential"
+  },
+  {
     "id": "demon_elder",
     "name": "魔宗长老",
     "hp": 120,
@@ -81,6 +122,42 @@
     "special": {
       "enrage": { "threshold": 0.3, "strength": 5, "desc": "当HP低于30%时，魔宗长老暴走，力量+5！" },
       "phaseShift": { "threshold": 0.5, "desc": "当HP低于50%时，长老进入第二阶段，每回合获得5护盾" }
+    }
+  },
+  {
+    "id": "ice_queen",
+    "name": "冰霜女帝",
+    "hp": 180,
+    "type": "boss",
+    "intents": [
+      { "type": "attack", "value": 10, "hits": 2 },
+      { "type": "defend", "value": 20 },
+      { "type": "debuff", "effect": { "weak": 3 }, "desc": "冰封万里" },
+      { "type": "attack", "value": 30 },
+      { "type": "buff", "effect": { "strength": 4 }, "desc": "寒冰真气" }
+    ],
+    "pattern": "sequential",
+    "special": {
+      "enrage": { "threshold": 0.25, "strength": 6, "desc": "冰霜女帝凝聚寒气，力量+6！" },
+      "phaseShift": { "threshold": 0.5, "desc": "女帝进入冰甲形态，每回合获得5护盾" }
+    }
+  },
+  {
+    "id": "void_lord",
+    "name": "虚无天魔",
+    "hp": 250,
+    "type": "boss",
+    "intents": [
+      { "type": "attack", "value": 15 },
+      { "type": "debuff", "effect": { "weak": 2, "vulnerable": 2 }, "desc": "虚空侵蚀" },
+      { "type": "attack", "value": 12, "hits": 3 },
+      { "type": "buff", "effect": { "strength": 5 }, "desc": "吞噬虚空" },
+      { "type": "attack", "value": 40 }
+    ],
+    "pattern": "sequential",
+    "special": {
+      "enrage": { "threshold": 0.2, "strength": 8, "desc": "虚无天魔暴怒，力量+8！" },
+      "phaseShift": { "threshold": 0.5, "desc": "天魔化身，每回合获得5护盾" }
     }
   }
 ]

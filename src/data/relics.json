@@ -1,0 +1,92 @@
+[
+  {
+    "id": "small_spirit_sword",
+    "name": "小灵剑",
+    "desc": "每场战斗开始时+1力量",
+    "icon": "🗡️",
+    "rarity": "common",
+    "effect": { "type": "battleStart", "apply": { "strength": 1 } },
+    "price": 150
+  },
+  {
+    "id": "mountain_bell",
+    "name": "护山铃",
+    "desc": "每场战斗开始时+5护盾",
+    "icon": "🔔",
+    "rarity": "common",
+    "effect": { "type": "battleStart", "apply": { "block": 5 } },
+    "price": 150
+  },
+  {
+    "id": "tianji_abacus",
+    "name": "天机算盘",
+    "desc": "每回合多抽1张牌",
+    "icon": "🧮",
+    "rarity": "uncommon",
+    "effect": { "type": "turnStart", "apply": { "draw": 1 } },
+    "price": 250
+  },
+  {
+    "id": "spirit_root",
+    "name": "天灵根",
+    "desc": "每回合多1点灵气",
+    "icon": "🌿",
+    "rarity": "rare",
+    "effect": { "type": "turnStart", "apply": { "energy": 1 } },
+    "price": 300
+  },
+  {
+    "id": "poison_dragon",
+    "name": "毒龙模",
+    "desc": "每次出攻击牌附加1层中毒",
+    "icon": "🐉",
+    "rarity": "uncommon",
+    "effect": { "type": "onAttack", "apply": { "poison": 1 } },
+    "price": 200
+  },
+  {
+    "id": "fire_fan",
+    "name": "火鸣羽扇",
+    "desc": "每次出火系牌额外造成3点伤害",
+    "icon": "🪭",
+    "rarity": "uncommon",
+    "effect": { "type": "onFireCard", "apply": { "damage": 3 } },
+    "price": 200
+  },
+  {
+    "id": "golden_bell_shield",
+    "name": "金钟罩",
+    "desc": "前3回合不受任何状态效果",
+    "icon": "🛡️",
+    "rarity": "rare",
+    "effect": { "type": "statusImmunity", "turns": 3 },
+    "price": 280
+  },
+  {
+    "id": "nine_turn_pill",
+    "name": "九转仙丹",
+    "desc": "每场战斗开始回复10HP",
+    "icon": "💊",
+    "rarity": "common",
+    "effect": { "type": "battleStart", "apply": { "heal": 10 } },
+    "price": 160
+  },
+  {
+    "id": "black_market_token",
+    "name": "黑市令",
+    "desc": "商店价格减25%",
+    "icon": "🏷️",
+    "rarity": "uncommon",
+    "effect": { "type": "shopDiscount", "value": 0.25 },
+    "price": 180
+  },
+  {
+    "id": "formation_jade",
+    "name": "破阵玉符",
+    "desc": "Boss战伤害+25%",
+    "icon": "💎",
+    "rarity": "rare",
+    "effect": { "type": "bossDamage", "value": 0.25 },
+    "price": 300
+  }
+]
