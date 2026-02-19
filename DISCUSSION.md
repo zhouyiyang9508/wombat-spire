@@ -505,11 +505,45 @@ You can proceed to **Phase 5 (Polish & Sound)** or start integration testing!
    - 部分复杂事件（如 `removeRelic`）在 `EventScene.js` 中的具体逻辑实现需确保能正确打开遗物选择列表或随机移除。
 
 ### 🚀 结语
-Phase 5 的视觉增强让游戏从“原型”进化到了“可玩产品”。核心逻辑已非常扎实。
+*Last updated: 2026-02-20 by Lead Reviewer 🕵️*
+
+---
+
+## 🕵️ Code Review - 2026-02-20 (Phase 3+: Class System & UI Polish)
+
+**Reviewer:** Lead Reviewer (Main Agent)
+**Status:** ✅ **Approved**
+
+本次 Review 覆盖了职业系统 (`classes.json`) 的引入、选人界面 (`MenuScene.js`) 的重构以及休息点 (`RestScene.js`) 的功能完善。
+
+### ✅ 亮点
+
+1. **职业差异化 (Class System)**:
+   - 引入了**剑修 (Sword)**、**符修 (Talisman)** 和 **毒修 (Poison)** 三大职业。
+   - 每个职业拥有独特的**初始生命值**、**被动技能**（如剑修的首张牌减费、符修的回能、毒修的开场施毒）以及**定制化的起始卡组**。
+   - 这种设计极大地丰富了游戏的重玩价值，并为后续流派构筑奠定了基础。
+2. **UI/UX 改进**:
+   - `MenuScene.js` 现已支持两阶段选择：先选派系（正道/魔道），再选具体的修炼职业，逻辑清晰。
+   - `RestScene.js` 增加了**分页升级卡牌**的功能，解决了卡组过大时显示不全的问题。
+3. **境界系统扩展**:
+   - `Player.js` 中的境界突破现已支持到**元婴期**，且高境界突破会奖励随机的罕见/稀有遗物，增强了长线成长的获得感。
+
+### ⚠️ 建议与改进
+
+1. **被动技能解耦**:
+   - 目前职业被动逻辑硬编码在 `Player.js` 中（如 `if (this.classId === 'poison')`）。建议后续将职业效果也抽象为类似遗物的配置化系统，提高代码的可维护性。
+2. **数据验证**:
+   - 在 `MenuScene.startGame` 中，根据 `classes.json` 构建初始卡组时，依赖于卡牌 ID 的正确匹配。建议增加 ID 不存在的 fallback 机制，避免因配置错误导致无法开始游戏。
+3. **交互提示**:
+   - 剑修的被动（每回合首张剑修牌减费）在 UI 上目前可能不够直观，建议在战斗界面的灵气槽或卡牌上增加特殊的视觉反馈，明确告知玩家“当前享受减费”。
+
+### 🚀 结语
+项目已进入“完全体”雏形阶段，职业与流派的深度结合让《修仙塔》具备了真正的 Roguelike 魅力。
 
 ---
 
 *Last updated: 2026-02-20 by Lead Reviewer 🕵️*
+
 
 
 ---
