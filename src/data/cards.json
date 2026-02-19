@@ -184,12 +184,13 @@
     "name": "吞噬天地",
     "type": "attack",
     "cost": 2,
-    "desc": "造成等于敌人中毒层数 x3 的伤害",
-    "effect": { "poisonBurst": 3 },
+    "exhaust": true,
+    "desc": "造成等于敌人中毒层数 x2 的伤害【消耗】",
+    "effect": { "poisonBurst": 2 },
     "rarity": "rare",
     "realm": "炼气期",
     "tags": ["demonic", "soul"],
-    "upgraded": { "desc": "造成等于敌人中毒层数 x4 的伤害", "effect": { "poisonBurst": 4 } }
+    "upgraded": { "desc": "造成等于敌人中毒层数 x3 的伤害【消耗】", "effect": { "poisonBurst": 3 } }
   },
   {
     "id": "dark_shield",
@@ -244,12 +245,13 @@
     "name": "回灵丹",
     "type": "skill",
     "cost": 0,
-    "desc": "回复 1 点灵气",
+    "exhaust": true,
+    "desc": "回复 1 点灵气【消耗】",
     "effect": { "energy": 1 },
     "rarity": "common",
     "realm": "炼气期",
     "tags": ["neutral", "pill"],
-    "upgraded": { "desc": "回复 1 点灵气，抽 1 张牌", "effect": { "energy": 1, "draw": 1 } }
+    "upgraded": { "desc": "回复 1 点灵气，抽 1 张牌【消耗】", "effect": { "energy": 1, "draw": 1 } }
   },
   {
     "id": "combo_strike",
@@ -280,12 +282,13 @@
     "name": "灵气测试",
     "type": "skill",
     "cost": 0,
-    "desc": "抽 1 张牌",
+    "exhaust": true,
+    "desc": "抽 1 张牌【消耗】",
     "effect": { "draw": 1 },
     "rarity": "common",
     "realm": "炼气期",
     "tags": ["neutral", "pill"],
-    "upgraded": { "desc": "抽 2 张牌", "effect": { "draw": 2 } }
+    "upgraded": { "desc": "抽 2 张牌【消耗】", "effect": { "draw": 2 } }
   },
 
   {

@@ -295,3 +295,18 @@ Phase 3 的内容扩充非常出色，引入了丰富的流派机制（剑修、
 *   **UI**: Add a visual cue when a card will Exhaust (e.g., different border color or text tooltip).
 
 **Next Step**: Please fix the Exhaust logic before proceeding to Phase 4.
+
+---
+
+## 修复记录 - Phase 3 Critical Fix (2026-02-20)
+
+- **修复了 exhaust 逻辑（Bug 2）**：`CardSystem.js` 的 `playCard()` 方法现在会根据卡牌的 `exhaust` 属性决定去向——有 `exhaust: true` 的牌进入 `exhaustPile`（消耗堆），否则进入 `discardPile`（弃牌堆）。
+- **修复了无限循环漏洞（Bug 1）**：在 `cards.json` 中为以下三张卡牌添加了 `"exhaust": true`：
+  - `spirit_pill`（回灵丹，0费+1灵气）
+  - `qi_test`（灵气测试，0费抽1牌）
+  - `devour_world`（吞噬天地，Rare级，毒×伤害）
+- **平衡调整**：`devour_world` 伤害系数从 ×3 降为 ×2（加强版从 ×4 降为 ×3），同时 exhaust 限制其每场战斗只能使用一次。
+- **UI 增强**：`CardUI.js` 为有 `exhaust: true` 的卡牌添加了橙红色「消耗」标签（底部），卡牌边框改为虚线样式加以区分。
+- **卡牌描述同步**：所有 exhaust 卡牌的 `desc` 字段末尾追加了【消耗】标注，方便玩家在渲染前也能感知到该属性。
+
+*Fixed by 代码熊 🐻 - 2026-02-20*

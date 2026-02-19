@@ -12,13 +12,14 @@ export class CardUI {
       const cost = player.getEffectiveCost(card);
       const canPlay = player.energy >= cost;
       const el = document.createElement('div');
-      el.className = `card ${card.tags[0] || 'neutral'} ${canPlay ? '' : 'disabled'}`;
+      el.className = `card ${card.tags[0] || 'neutral'} ${canPlay ? '' : 'disabled'} ${card.exhaust ? 'exhaust-card' : ''}`;
       el.innerHTML = `
         <div class="card-cost">${cost}</div>
         <div class="card-name">${card.name}</div>
         <div class="card-type">${this._typeLabel(card.type)}</div>
         <div class="card-desc">${card.desc}</div>
         <div class="card-tags">${card.tags.map(t => this._tagLabel(t)).join(' ')}</div>
+        ${card.exhaust ? '<div class="card-exhaust-label">消耗</div>' : ''}
       `;
       el.addEventListener('click', () => {
         if (canPlay) this.onPlayCard(i);

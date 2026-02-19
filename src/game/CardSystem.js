@@ -36,7 +36,12 @@ export class CardSystem {
   playCard(index) {
     if (index < 0 || index >= this.hand.length) return null;
     const card = this.hand.splice(index, 1)[0];
-    this.discardPile.push(card);
+    // 打出卡牌后，根据 exhaust 属性决定去向
+    if (card.exhaust) {
+      this.exhaustPile.push(card);
+    } else {
+      this.discardPile.push(card);
+    }
     return card;
   }
 
