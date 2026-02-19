@@ -1,0 +1,86 @@
+[
+  {
+    "id": "wolf_demon",
+    "name": "山妖狼嚎",
+    "hp": 32,
+    "type": "normal",
+    "intents": [
+      { "type": "attack", "value": 8 },
+      { "type": "attack", "value": 5, "hits": 2 },
+      { "type": "buff", "effect": { "strength": 2 }, "desc": "嚎叫增力" },
+      { "type": "attack", "value": 12 }
+    ],
+    "pattern": "random"
+  },
+  {
+    "id": "earth_ghost",
+    "name": "地鬼恶煞",
+    "hp": 40,
+    "type": "normal",
+    "intents": [
+      { "type": "attack", "value": 10 },
+      { "type": "defend", "value": 8 },
+      { "type": "debuff", "effect": { "weak": 1 }, "desc": "阴气缠身" },
+      { "type": "attack", "value": 14 }
+    ],
+    "pattern": "sequential"
+  },
+  {
+    "id": "water_tiger",
+    "name": "水妖虎精",
+    "hp": 36,
+    "type": "normal",
+    "intents": [
+      { "type": "attack", "value": 6, "hits": 2 },
+      { "type": "defend", "value": 6 },
+      { "type": "attack", "value": 11 },
+      { "type": "debuff", "effect": { "vulnerable": 1 }, "desc": "水幕迷障" }
+    ],
+    "pattern": "sequential"
+  },
+  {
+    "id": "cloud_spirit",
+    "name": "云妙散仙",
+    "hp": 28,
+    "type": "normal",
+    "intents": [
+      { "type": "buff", "effect": { "strength": 1 }, "desc": "聚灵" },
+      { "type": "attack", "value": 15 },
+      { "type": "defend", "value": 10 },
+      { "type": "attack", "value": 9 }
+    ],
+    "pattern": "sequential"
+  },
+  {
+    "id": "twin_demons",
+    "name": "双煞鬼兄弟",
+    "hp": 22,
+    "type": "normal",
+    "count": 2,
+    "intents": [
+      { "type": "attack", "value": 7 },
+      { "type": "defend", "value": 5 },
+      { "type": "attack", "value": 10 },
+      { "type": "buff", "effect": { "strength": 1 }, "desc": "兄弟同心" }
+    ],
+    "pattern": "sequential"
+  },
+  {
+    "id": "demon_elder",
+    "name": "魔宗长老",
+    "hp": 120,
+    "type": "boss",
+    "intents": [
+      { "type": "attack", "value": 12 },
+      { "type": "buff", "effect": { "strength": 3 }, "desc": "魔气灌体" },
+      { "type": "attack", "value": 8, "hits": 3 },
+      { "type": "debuff", "effect": { "weak": 2, "vulnerable": 1 }, "desc": "魔音贯耳" },
+      { "type": "attack", "value": 25 }
+    ],
+    "pattern": "sequential",
+    "special": {
+      "enrage": { "threshold": 0.3, "strength": 5, "desc": "当HP低于30%时，魔宗长老暴走，力量+5！" },
+      "phaseShift": { "threshold": 0.5, "desc": "当HP低于50%时，长老进入第二阶段，每回合获得5护盾" }
+    }
+  }
+]
