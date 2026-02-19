@@ -2,6 +2,7 @@
 import { Enemy } from '../game/Enemy.js';
 import { CardSystem } from '../game/CardSystem.js';
 import { CardUI } from '../ui/CardUI.js';
+import { BattleVFX } from '../ui/BattleVFX.js';
 
 export class BattleScene extends Phaser.Scene {
   constructor() {
@@ -40,8 +41,9 @@ export class BattleScene extends Phaser.Scene {
     this.player.onBattleStart();
     this.player.onBattleStartEnemies(this.enemies);
 
-    // Card UI
+    // Card UI & VFX
     this.cardUI = new CardUI((index) => this.playCard(index));
+    this.vfx = new BattleVFX(this);
 
     // Draw background
     this._drawBackground(w, h);
@@ -263,6 +265,10 @@ export class BattleScene extends Phaser.Scene {
         results.forEach(r => {
           if (r.type === 'damage') {
             this.addLog(`${enemy.name} 攻击造成 ${r.hpLoss} 伤害${r.blocked > 0 ? `（${r.blocked} 格挡）` : ''}`);
+            if (r.hpLoss > 0) {
+              this.vfx.damageHit(100, this.cameras.main.height * 0.6);
+              this.vfx.damageNumber(120, this.cameras.main.height * 0.55, r.hpLoss);
+            }
           } else if (r.type === 'defend') {
             this.addLog(`${enemy.name} 获得 ${r.value} 护盾`);
           } else if (r.type === 'buff' || r.type === 'debuff') {
@@ -304,6 +310,15 @@ export class BattleScene extends Phaser.Scene {
     this.checkBattleEnd();
   }
 
+  _getEnemyPos(target) {
+    const idx = this.enemies.indexOf(target);
+    if (idx >= 0 && idx < this.enemyDisplays.length) {
+      const c = this.enemyDisplays[idx].container;
+      return { x: c.x, y: c.y };
+    }
+    return { x: this.cameras.main.width / 2, y: this.cameras.main.height * 0.28 };
+  }
+
   resolveCard(card, target) {
     const eff = card.effect;
     const p = this.player;
@@ -328,6 +343,16 @@ export class BattleScene extends Phaser.Scene {
         const baseDmg = p.calcDamage(eff.damage + fireBonus, extraDmg, bossMultiplier);
         const r = target.takeDamage(baseDmg);
         this.addLog(`${card.name}: ${baseDmg} 伤害${r.blocked > 0 ? `（${r.blocked} 格挡）` : ''}`);
+        // VFX
+        const tPos = this._getEnemyPos(target);
+        if (card.tags && card.tags.includes('sword')) {
+          this.vfx.swordSlash(100, this.cameras.main.height * 0.6, tPos.x, tPos.y);
+        } else if (card.tags && card.tags.includes('fire')) {
+          this.vfx.fireExplosion(tPos.x, tPos.y);
+        } else {
+          this.vfx.damageHit(tPos.x, tPos.y);
+        }
+        if (r.hpLoss > 0) this.vfx.damageNumber(tPos.x + 30, tPos.y - 20, r.hpLoss);
         if (r.killed && eff.killBurst) {
           this.enemies.forEach(e => {
             if (e.isAlive()) e.takeDamage(eff.killBurst);
@@ -353,19 +378,19 @@ export class BattleScene extends Phaser.Scene {
       }
     }
 
-    if (eff.block) { p.addBlock(eff.block); this.addLog(`${card.name}: +${eff.block} 护盾`); }
-    if (eff.heal) { p.heal(eff.heal); this.addLog(`${card.name}: 回复 ${eff.heal} HP`); }
+    if (eff.block) { p.addBlock(eff.block); this.addLog(`${card.name}: +${eff.block} 护盾`); this.vfx.shieldGain(100, this.cameras.main.height * 0.6); }
+    if (eff.heal) { p.heal(eff.heal); this.addLog(`${card.name}: 回复 ${eff.heal} HP`); this.vfx.healEffect(100, this.cameras.main.height * 0.55); }
     if (eff.draw) this.cardSystem.drawCards(eff.draw);
     if (eff.energy) p.energy += eff.energy;
     if (eff.weak && target) {
       target.effects.apply('weak', eff.weak);
     }
     if (eff.vulnerable && target) target.effects.apply('vulnerable', eff.vulnerable);
-    if (eff.poison && target) target.effects.apply('poison', eff.poison);
+    if (eff.poison && target) { target.effects.apply('poison', eff.poison); const tp = this._getEnemyPos(target); this.vfx.poisonCloud(tp.x, tp.y); }
     if (eff.burn && target) target.effects.apply('burn', eff.burn);
     if (eff.selfDamage) p.takeDirectDamage(eff.selfDamage);
     if (eff.selfBurn) p.effects.apply('burn', eff.selfBurn);
-    if (eff.frozen && target) { target.effects.apply('frozen', eff.frozen); this.addLog(`${card.name}: 施加 ${eff.frozen} 层冰冻`); }
+    if (eff.frozen && target) { target.effects.apply('frozen', eff.frozen); this.addLog(`${card.name}: 施加 ${eff.frozen} 层冰冻`); const tp = this._getEnemyPos(target); this.vfx.iceFreeze(tp.x, tp.y); }
     if (eff.strength) { p.effects.apply('strength', eff.strength); this.addLog(`${card.name}: +${eff.strength} 力量`); }
     if (eff.allDamage) {
       const extraDmg = p.getExtraDamage(card);
@@ -378,8 +403,14 @@ export class BattleScene extends Phaser.Scene {
       });
     }
     if (eff.allPoison) {
-      this.enemies.forEach(e => {
-        if (e.isAlive()) e.effects.apply('poison', eff.allPoison);
+      this.enemies.forEach((e, idx) => {
+        if (e.isAlive()) {
+          e.effects.apply('poison', eff.allPoison);
+          if (idx < this.enemyDisplays.length) {
+            const c = this.enemyDisplays[idx].container;
+            this.vfx.poisonCloud(c.x, c.y);
+          }
+        }
       });
       this.addLog(`${card.name}: 全体敌人 +${eff.allPoison} 毒`);
     }

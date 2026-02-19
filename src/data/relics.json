@@ -48,7 +48,7 @@
     "id": "fire_fan",
     "name": "火鸣羽扇",
     "desc": "每次出火系牌额外造成3点伤害",
-    "icon": "🪭",
+    "icon": "扇",
     "rarity": "uncommon",
     "effect": { "type": "onFireCard", "apply": { "damage": 3 } },
     "price": 230
@@ -93,7 +93,7 @@
     "id": "heart_mirror",
     "name": "护心镜",
     "desc": "战斗开始时+3护盾",
-    "icon": "🪞",
+    "icon": "护",
     "rarity": "common",
     "effect": { "type": "battleStart", "apply": { "block": 3 } },
     "price": 100
@@ -111,7 +111,7 @@
     "id": "light_talisman",
     "name": "轻身符",
     "desc": "每回合抽牌+1",
-    "icon": "🪶",
+    "icon": "羽",
     "rarity": "common",
     "effect": { "type": "turnStart", "apply": { "draw": 1 } },
     "price": 140
@@ -219,7 +219,7 @@
     "id": "reincarnation_mirror",
     "name": "轮回镜",
     "desc": "死亡时恢复50%生命（每战斗1次，消耗型）",
-    "icon": "🪬",
+    "icon": "镜",
     "rarity": "rare",
     "effect": { "type": "deathSave", "healPercent": 0.5 },
     "price": 500

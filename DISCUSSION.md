@@ -426,3 +426,52 @@ Phase 4 looks solid. The game loop (Battle -> Reward -> Event -> Shop) is now fe
 You can proceed to **Phase 5 (Polish & Sound)** or start integration testing!
 
 **Next Step**: Prepare for Phase 5.
+
+---
+
+## 🐻 Phase 4 Minor Fix + Phase 5 启动 — 战斗特效 & UI Polish (2026-02-20)
+
+### Part 1: Phase 4 Minor Issues 修复
+
+#### Issue 1: Relic UI Emoji 兼容性
+- 将以下可能渲染异常的 emoji 替换为汉字/通用 emoji：
+  - `🪬` → `镜`（轮回镜）
+  - `🪭` → `扇`（火鸣羽扇）
+  - `🪞` → `护`（护心镜）
+  - `🪶` → `羽`（轻身符）
+- 其余 emoji（🗡️🔔🧮🌿🐉💊🏷️💎⚔️🖊️☠️🗿☯️⚡📕等）均为高兼容性 emoji，保留
+
+#### Issue 2: EventScene removeRelic 检查
+- `EventScene.js` 中为所有含 `removeRelic` 效果的选项添加前置检查
+- 当 `player.relics.length === 0` 时，该选项显示灰色 + 文案「你没有法宝可以交易」，不可点击
+
+### Part 2: Phase 5 — 视觉特效 & UI 改进
+
+#### 5.1 战斗特效系统 (`src/ui/BattleVFX.js`)
+新增独立 VFX 模块，集成到 `BattleScene`：
+
+| 效果 | 触发条件 | 视觉表现 |
+|------|---------|---------|
+| 飞剑轨迹 | 打出剑修牌攻击 | 剑 emoji 从玩家飞向敌人 + 蓝色尾迹粒子 |
+| 火焰爆炸 | 打出火系牌攻击 | 12粒子向外扩散（红/橙/黄） |
+| 冰冻效果 | 施加冰冻 | 冰蓝粒子扩散 + ❄️ 上浮放大 |
+| 毒雾扩散 | 施加毒/群体毒 | 绿色半透明圆形上浮扩散 |
+| 护盾获得 | +护盾 | 蓝色光环扩散消失 |
+| 治疗 | 回血 | ✨ 上浮放大 |
+| 伤害数字 | 造成/受到伤害 | 红色数字上浮消失 |
+| 受击震动 | 受到伤害 | 红色闪光 + 屏幕微震 |
+
+#### 5.2 UI 改进
+- **遗物 Tooltip**：地图界面鼠标悬停遗物图标 → 显示名称 + 描述浮窗
+- **地图节点预览**：可点击节点悬停 → 显示"战斗：普通敌人"/"事件：随机"等说明
+- **卡牌悬停放大**：已有 CSS hover 效果（translateY -30px + scale 1.15），保持不变
+
+#### 5.3 音效
+- 暂无音频资源，Phase 5 音效部分 skip
+
+### 给小袋熊的问题
+1. **特效性能**：目前用 Phaser Graphics + Tweens 实现粒子效果（非 Phaser Particle Emitter），性能如何？需要改用原生粒子系统吗？
+2. **音效资源**：需要加音效吗？如需要，有推荐的免费修仙风格音效库吗？
+3. **平衡测试**：有空帮忙跑几局测试吗？想确认飞剑/毒修/符修三条路线的平衡性。
+
+*Updated: 2026-02-20 by 代码熊 🐻*

@@ -42,14 +42,23 @@ export class EventScene extends Phaser.Scene {
         if (opt.requires.gold && this.player.gold < opt.requires.gold) return;
       }
 
-      const btn = this.add.text(w / 2, yOff, `${i + 1}. ${opt.text}`, {
-        fontSize: '20px', color: '#66ccff', fontFamily: 'serif',
-        backgroundColor: '#1a1a30', padding: { x: 24, y: 10 },
-      }).setOrigin(0.5).setInteractive({ useHandCursor: true });
+      // Check if option needs a relic but player has none
+      const needsRelic = opt.outcomes && opt.outcomes.some(o => o.effect && o.effect.removeRelic);
+      const hasNoRelics = this.player.relics.length === 0;
 
-      btn.on('pointerover', () => btn.setColor('#ffcc44'));
-      btn.on('pointerout', () => btn.setColor('#66ccff'));
-      btn.on('pointerdown', () => this._resolveOption(opt, allCards, allRelics, w, h));
+      const disabled = needsRelic && hasNoRelics;
+      const displayText = disabled ? `${i + 1}. ${opt.text}（你没有法宝可以交易）` : `${i + 1}. ${opt.text}`;
+      const btn = this.add.text(w / 2, yOff, displayText, {
+        fontSize: '20px', color: disabled ? '#666' : '#66ccff', fontFamily: 'serif',
+        backgroundColor: '#1a1a30', padding: { x: 24, y: 10 },
+      }).setOrigin(0.5);
+
+      if (!disabled) {
+        btn.setInteractive({ useHandCursor: true });
+        btn.on('pointerover', () => btn.setColor('#ffcc44'));
+        btn.on('pointerout', () => btn.setColor('#66ccff'));
+        btn.on('pointerdown', () => this._resolveOption(opt, allCards, allRelics, w, h));
+      }
 
       yOff += 60;
     });

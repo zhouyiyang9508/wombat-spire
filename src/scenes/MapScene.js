@@ -34,12 +34,27 @@ export class MapScene extends Phaser.Scene {
       fontSize: '16px', color: '#ccc', fontFamily: 'serif',
     });
 
-    // Relic display
+    // Relic display with tooltips
     if (this.player.relics.length > 0) {
-      const relicStr = this.player.relics.map(r => r.icon).join(' ');
-      this.add.text(w - 20, 15, relicStr, {
-        fontSize: '16px', fontFamily: 'serif',
-      }).setOrigin(1, 0);
+      let relicX = w - 20;
+      this.relicTooltip = null;
+      for (let ri = this.player.relics.length - 1; ri >= 0; ri--) {
+        const relic = this.player.relics[ri];
+        const icon = this.add.text(relicX, 15, relic.icon, {
+          fontSize: '18px', fontFamily: 'serif',
+        }).setOrigin(1, 0).setInteractive({ useHandCursor: true });
+        relicX -= 28;
+        icon.on('pointerover', () => {
+          if (this.relicTooltip) this.relicTooltip.destroy();
+          this.relicTooltip = this.add.text(icon.x - 10, 40, `${relic.name}\n${relic.desc}`, {
+            fontSize: '13px', color: '#e8d5a3', backgroundColor: '#1a1a30',
+            padding: { x: 10, y: 6 }, fontFamily: 'serif', wordWrap: { width: 200 },
+          }).setOrigin(1, 0).setDepth(50);
+        });
+        icon.on('pointerout', () => {
+          if (this.relicTooltip) { this.relicTooltip.destroy(); this.relicTooltip = null; }
+        });
+      }
     }
 
     // Draw map - scroll container
@@ -148,6 +163,17 @@ export class MapScene extends Phaser.Scene {
             circle.strokeCircle(pos.x, pos.y, 22);
             circle.fillStyle(info.color, 1);
             circle.fillCircle(pos.x, pos.y, 15);
+            // Node type preview tooltip
+            const labels = {
+              battle: '战斗：普通敌人', elite: '战斗：精英敌人',
+              event: '事件：随机', rest: '休息：回复HP',
+              shop: '商店：购买卡牌/法宝', boss: '⚠️ Boss战'
+            };
+            if (this._nodeTooltip) this._nodeTooltip.destroy();
+            this._nodeTooltip = this.add.text(pos.x, pos.y - 30, labels[node.type] || node.type, {
+              fontSize: '12px', color: '#e8d5a3', backgroundColor: '#1a1a30',
+              padding: { x: 8, y: 4 }, fontFamily: 'serif',
+            }).setOrigin(0.5, 1).setDepth(50);
           });
           hitArea.on('pointerout', () => {
             circle.clear();
@@ -155,6 +181,7 @@ export class MapScene extends Phaser.Scene {
             circle.strokeCircle(pos.x, pos.y, 20);
             circle.fillStyle(info.color, 0.8);
             circle.fillCircle(pos.x, pos.y, 15);
+            if (this._nodeTooltip) { this._nodeTooltip.destroy(); this._nodeTooltip = null; }
           });
         }
       });
