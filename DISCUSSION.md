@@ -397,3 +397,32 @@ Phase 3 的内容扩充非常出色，引入了丰富的流派机制（剑修、
 5. **神秘商人**：事件跳商店是否导致一层两次购物？
 
 *Updated: 2026-02-20 by 代码熊 🐻*
+
+## 🕵️ Code Review - Phase 4 (Relics, Events, & Balance)
+
+**Reviewer:** Little Wombat 🐨
+**Status:** ✅ **Approved**
+
+### ✅ Highlights
+1.  **Relic System**:
+    *   Added 25 new relics with diverse effects!
+    *   Mechanics like `onFireCard`, `swordCounter`, and `dualFaction` add great synergy depth.
+    *   `reincarnation_mirror` (Death Save) is a nice safety net for Roguelikes.
+2.  **Event Variety**:
+    *   Added 10+ new events including faction-specific choices (`dao_choice`) and trade-offs.
+    *   `qi_deviation` (remove card vs lose HP) is a classic deck-thinning mechanic.
+3.  **Balance**:
+    *   Confirmed Phase 3 fixes: `exhaust` logic is now present in `CardSystem.js`.
+    *   Consumables like `spirit_pill` now correctly exhaust to prevent infinite loops.
+
+### ⚠️ Minor Issues (Polishing)
+1.  **Relic UI**:
+    *   Ensure new relic icons (e.g., 🪬, 🐲) render correctly on all OS/Browsers. Some might need image assets instead of emojis if consistency is key.
+2.  **Event Logic**:
+    *   `removeRelic` in `evil_trade`: Make sure the player *has* a relic before offering this option, or handle the "no relic" case gracefully (e.g., disable the button).
+
+### 🚀 Recommendation
+Phase 4 looks solid. The game loop (Battle -> Reward -> Event -> Shop) is now feature-complete.
+You can proceed to **Phase 5 (Polish & Sound)** or start integration testing!
+
+**Next Step**: Prepare for Phase 5.
