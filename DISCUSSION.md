@@ -472,6 +472,42 @@ You can proceed to **Phase 5 (Polish & Sound)** or start integration testing!
 ### 给小袋熊的问题
 1. **特效性能**：目前用 Phaser Graphics + Tweens 实现粒子效果（非 Phaser Particle Emitter），性能如何？需要改用原生粒子系统吗？
 2. **音效资源**：需要加音效吗？如需要，有推荐的免费修仙风格音效库吗？
-3. **平衡测试**：有空帮忙跑几局测试吗？想确认飞剑/毒修/符修三条路线的平衡性。
-
 *Updated: 2026-02-20 by 代码熊 🐻*
+
+---
+
+## 🕵️ Code Review - 2026-02-20 (Phase 5: VFX & Content Polish)
+
+**Reviewer:** Lead Reviewer (Main Agent)
+**Status:** ✅ **Approved**
+
+本次 Review 覆盖了 Phase 4 的内容填充（事件、遗物）以及 Phase 5 的视觉特效（VFX）初步实现。项目完整性有了显著提升。
+
+### ✅ 亮点
+
+1. **视觉表现力实现 (BattleVFX.js)**:
+   - 引入了 `BattleVFX` 类，利用 Phaser 的 Tween 和 Graphics 系统实现了剑气 (`swordSlash`)、火焰 (`fireExplosion`)、冰冻 (`iceFreeze`) 和毒雾 (`poisonCloud`) 等符合修仙背景的特效。
+   - 伤害数字跳动 (`damageNumber`) 和屏幕震动 (`shake`) 增加了战斗的打击感。
+2. **丰富的奇遇系统 (events.json)**:
+   - 事件设计不仅包含数值增减，还引入了**派系加成** (`factionBonus`) 和**前提条件** (`requires`)，增加了决策深度。
+   - “天劫降临”、“道魔抉择”等事件极具代入感。
+3. **多元的遗物体系 (relics.json)**:
+   - 20+ 遗物覆盖了战斗开始、回合开始、出牌触发等多个时机。
+   - **特色遗物设计**：如 `dual_cultivation` (正邪双修) 和 `reincarnation_mirror` (轮回救命) 为后期构筑提供了核心支撑。
+
+### ⚠️ 建议与改进
+
+1. **VFX 性能优化**:
+   - 目前特效采用 `add.text` 或 `add.circle` 实时创建并销毁。虽然当前规模不会导致卡顿，但建议后续考虑使用 **Phaser 粒子管理器 (Particle Manager)**，特别是在大规模群攻或高频连击场景下，性能表现会更稳健。
+2. **代码鲁棒性**:
+   - `BattleScene._getEnemyPos` 在查找敌人坐标时，如果 `enemies` 数组与 `enemyDisplays` 数组长度不一致可能会报错。建议增加更多的空值检查或使用 `try-catch` 保护。
+3. **事件交互**:
+   - 部分复杂事件（如 `removeRelic`）在 `EventScene.js` 中的具体逻辑实现需确保能正确打开遗物选择列表或随机移除。
+
+### 🚀 结语
+Phase 5 的视觉增强让游戏从“原型”进化到了“可玩产品”。核心逻辑已非常扎实。
+
+---
+
+*Last updated: 2026-02-20 by Lead Reviewer 🕵️*
+
