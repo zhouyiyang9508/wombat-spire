@@ -14,8 +14,9 @@ export class BreakthroughScene extends Phaser.Scene {
     const h = this.cameras.main.height;
     this.cameras.main.setBackgroundColor('#0a0a12');
 
+    const allRelics = this.cache.json.get('relics');
     const oldRealm = this.player.realm;
-    this.player.breakthrough();
+    const result = this.player.breakthrough(allRelics);
     const newRealm = this.player.realm;
 
     // Flash effect
@@ -56,15 +57,9 @@ export class BreakthroughScene extends Phaser.Scene {
         fontSize: '28px', color: '#ffffff', fontFamily: 'serif',
       }).setOrigin(0.5);
 
-      let bonusText = '';
-      if (this.player.realmIndex === 1) {
-        bonusText = '+10 最大HP，解锁新卡池';
-      } else if (this.player.realmIndex === 2) {
-        bonusText = '+1 灵气/回合，解锁稀有卡';
-      }
-
-      this.add.text(w / 2, h / 2 + 40, bonusText, {
+      this.add.text(w / 2, h / 2 + 40, result.bonusText, {
         fontSize: '20px', color: '#88ff88', fontFamily: 'serif',
+        wordWrap: { width: 500 }, align: 'center',
       }).setOrigin(0.5);
 
       const cont = this.add.text(w / 2, h / 2 + 120, '继续 →', {

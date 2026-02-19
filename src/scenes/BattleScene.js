@@ -38,6 +38,7 @@ export class BattleScene extends Phaser.Scene {
 
     // Apply player battle start effects (relics etc)
     this.player.onBattleStart();
+    this.player.onBattleStartEnemies(this.enemies);
 
     // Card UI
     this.cardUI = new CardUI((index) => this.playCard(index));
@@ -297,6 +298,7 @@ export class BattleScene extends Phaser.Scene {
     }
 
     this.cardSystem.playCard(index);
+    this.player.onCardPlayed(card);
     this.resolveCard(card, target);
     this.refreshUI();
     this.checkBattleEnd();

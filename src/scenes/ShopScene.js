@@ -17,7 +17,7 @@ export class ShopScene extends Phaser.Scene {
 
     const allCards = this.cache.json.get('cards');
     const allRelics = this.cache.json.get('relics');
-    const discount = this.player.getShopDiscount();
+    const discount = this.player.getShopDiscount() + (this.mapData.tempDiscount || 0);
 
     this.add.text(w / 2, 30, '💰 灵石商铺', {
       fontSize: '28px', color: '#e8d5a3', fontFamily: 'serif',
@@ -86,7 +86,7 @@ export class ShopScene extends Phaser.Scene {
   }
 
   _cardPrice(card) {
-    const prices = { common: 50, uncommon: 80, rare: 140 };
+    const prices = { common: 50, uncommon: 75, rare: 125 };
     return prices[card.rarity] || 60;
   }
 

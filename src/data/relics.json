@@ -6,7 +6,7 @@
     "icon": "🗡️",
     "rarity": "common",
     "effect": { "type": "battleStart", "apply": { "strength": 1 } },
-    "price": 150
+    "price": 120
   },
   {
     "id": "mountain_bell",
@@ -15,7 +15,7 @@
     "icon": "🔔",
     "rarity": "common",
     "effect": { "type": "battleStart", "apply": { "block": 5 } },
-    "price": 150
+    "price": 130
   },
   {
     "id": "tianji_abacus",
@@ -33,7 +33,7 @@
     "icon": "🌿",
     "rarity": "rare",
     "effect": { "type": "turnStart", "apply": { "energy": 1 } },
-    "price": 300
+    "price": 400
   },
   {
     "id": "poison_dragon",
@@ -42,7 +42,7 @@
     "icon": "🐉",
     "rarity": "uncommon",
     "effect": { "type": "onAttack", "apply": { "poison": 1 } },
-    "price": 200
+    "price": 220
   },
   {
     "id": "fire_fan",
@@ -51,7 +51,7 @@
     "icon": "🪭",
     "rarity": "uncommon",
     "effect": { "type": "onFireCard", "apply": { "damage": 3 } },
-    "price": 200
+    "price": 230
   },
   {
     "id": "golden_bell_shield",
@@ -60,7 +60,7 @@
     "icon": "🛡️",
     "rarity": "rare",
     "effect": { "type": "statusImmunity", "turns": 3 },
-    "price": 280
+    "price": 420
   },
   {
     "id": "nine_turn_pill",
@@ -69,7 +69,7 @@
     "icon": "💊",
     "rarity": "common",
     "effect": { "type": "battleStart", "apply": { "heal": 10 } },
-    "price": 160
+    "price": 140
   },
   {
     "id": "black_market_token",
@@ -78,7 +78,7 @@
     "icon": "🏷️",
     "rarity": "uncommon",
     "effect": { "type": "shopDiscount", "value": 0.25 },
-    "price": 180
+    "price": 200
   },
   {
     "id": "formation_jade",
@@ -87,6 +87,141 @@
     "icon": "💎",
     "rarity": "rare",
     "effect": { "type": "bossDamage", "value": 0.25 },
+    "price": 400
+  },
+  {
+    "id": "heart_mirror",
+    "name": "护心镜",
+    "desc": "战斗开始时+3护盾",
+    "icon": "🪞",
+    "rarity": "common",
+    "effect": { "type": "battleStart", "apply": { "block": 3 } },
+    "price": 100
+  },
+  {
+    "id": "spirit_stone_pouch",
+    "name": "灵石袋",
+    "desc": "每场战斗+1初始灵气",
+    "icon": "👛",
+    "rarity": "common",
+    "effect": { "type": "battleStart", "apply": { "energy": 1 } },
+    "price": 130
+  },
+  {
+    "id": "light_talisman",
+    "name": "轻身符",
+    "desc": "每回合抽牌+1",
+    "icon": "🪶",
+    "rarity": "common",
+    "effect": { "type": "turnStart", "apply": { "draw": 1 } },
+    "price": 140
+  },
+  {
+    "id": "body_pill",
+    "name": "炼体丹",
+    "desc": "获得时生命上限+10",
+    "icon": "💪",
+    "rarity": "common",
+    "effect": { "type": "onAcquire", "apply": { "maxHp": 10 } },
+    "price": 110
+  },
+  {
+    "id": "armor_talisman",
+    "name": "护甲符",
+    "desc": "每回合开始时+1护盾",
+    "icon": "🛡️",
+    "rarity": "common",
+    "effect": { "type": "turnStart", "apply": { "block": 1 } },
+    "price": 100
+  },
+  {
+    "id": "spirit_recovery_orb",
+    "name": "回灵珠",
+    "desc": "每3回合回复2灵气",
+    "icon": "🔮",
+    "rarity": "common",
+    "effect": { "type": "turnStartConditional", "condition": "everyNTurns", "n": 3, "apply": { "energy": 2 } },
+    "price": 120
+  },
+  {
+    "id": "swift_boots",
+    "name": "疾风靴",
+    "desc": "每回合多抽1张牌（首回合除外）",
+    "icon": "👢",
+    "rarity": "common",
+    "effect": { "type": "turnStartConditional", "condition": "notFirstTurn", "apply": { "draw": 1 } },
+    "price": 130
+  },
+  {
+    "id": "sword_case",
+    "name": "剑匣",
+    "desc": "每打出3张剑修牌，下一张剑修牌费用-1",
+    "icon": "⚔️",
+    "rarity": "uncommon",
+    "effect": { "type": "swordCounter", "threshold": 3, "apply": { "swordDiscount": 1 } },
+    "price": 250
+  },
+  {
+    "id": "talisman_pen",
+    "name": "符笔",
+    "desc": "符修牌伤害+2",
+    "icon": "🖊️",
+    "rarity": "uncommon",
+    "effect": { "type": "onTalismanCard", "apply": { "damage": 2 } },
+    "price": 230
+  },
+  {
+    "id": "poison_sac",
+    "name": "毒囊",
+    "desc": "战斗开始时所有敌人+2层毒",
+    "icon": "☠️",
+    "rarity": "uncommon",
+    "effect": { "type": "battleStartPoison", "apply": { "poison": 2 } },
+    "price": 260
+  },
+  {
+    "id": "vajra_body",
+    "name": "金刚体",
+    "desc": "受到伤害后，下回合+2力量",
+    "icon": "🗿",
+    "rarity": "uncommon",
+    "effect": { "type": "onDamageTaken", "apply": { "strength": 2 } },
+    "price": 280
+  },
+  {
+    "id": "dual_cultivation",
+    "name": "双修法宝",
+    "desc": "正邪双修：所有卡牌均享受派系费用减免",
+    "icon": "☯️",
+    "rarity": "uncommon",
+    "effect": { "type": "dualFaction" },
     "price": 300
+  },
+  {
+    "id": "immortal_sword_embryo",
+    "name": "仙剑胚胎",
+    "desc": "所有剑修牌伤害+3",
+    "icon": "⚡",
+    "rarity": "rare",
+    "effect": { "type": "swordUpgrade", "apply": { "damage": 3 } },
+    "price": 450
+  },
+  {
+    "id": "blood_tome",
+    "name": "血祭魔典",
+    "desc": "每损失5点生命，获得1点力量（永久）",
+    "icon": "📕",
+    "rarity": "rare",
+    "effect": { "type": "bloodSacrifice", "threshold": 5, "apply": { "strength": 1 } },
+    "price": 420
+  },
+  {
+    "id": "reincarnation_mirror",
+    "name": "轮回镜",
+    "desc": "死亡时恢复50%生命（每战斗1次，消耗型）",
+    "icon": "🪬",
+    "rarity": "rare",
+    "effect": { "type": "deathSave", "healPercent": 0.5 },
+    "price": 500
   }
 ]

@@ -105,6 +105,45 @@ export class EventScene extends Phaser.Scene {
         resultText += `\n获得法宝：${relic.icon} ${relic.name}`;
       }
     }
+    if (eff.rareRelic) {
+      const available = allRelics.filter(r => r.rarity === 'rare' && !this.player.hasRelic(r.id));
+      if (available.length > 0) {
+        const relic = available[Math.floor(Math.random() * available.length)];
+        this.player.addRelic(relic);
+        resultText += `\n获得稀有法宝：${relic.icon} ${relic.name}`;
+      }
+    }
+    if (eff.rareCard) {
+      const available = allCards.filter(c => c.rarity === 'rare' && !this.deck.some(d => d.id === c.id));
+      if (available.length > 0) {
+        const card = available[Math.floor(Math.random() * available.length)];
+        this.deck.push({ ...card });
+        resultText += `\n获得稀有卡牌：${card.name}`;
+      }
+    }
+    if (eff.removeCard) {
+      if (this.deck.length > 5) {
+        const idx = Math.floor(Math.random() * this.deck.length);
+        const removed = this.deck.splice(idx, 1)[0];
+        resultText += `\n失去卡牌：${removed.name}`;
+      }
+    }
+    if (eff.removeRelic) {
+      const removed = this.player.removeRandomRelic();
+      if (removed) resultText += `\n失去法宝：${removed.icon} ${removed.name}`;
+    }
+    if (eff.maxEnergy) {
+      this.player.maxEnergy += eff.maxEnergy;
+    }
+    if (eff.discountShop) {
+      // Transition to shop with temporary discount
+      this.scene.start('ShopScene', { ...this.mapData, tempDiscount: 0.2 });
+      return;
+    }
+    if (eff.eliteBattle) {
+      this.scene.start('BattleScene', { ...this.mapData, encounterType: 'elite' });
+      return;
+    }
 
     // Faction bonus
     if (opt.factionBonus && opt.factionBonus.faction === this.player.faction) {

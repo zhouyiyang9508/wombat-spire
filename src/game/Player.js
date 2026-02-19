@@ -16,10 +16,17 @@ export class Player {
     // Phase 2 additions
     this.gold = 50;
     this.relics = [];
-    this.realm = '炼气期';       // 炼气期 → 筑基期 → 金丹期
-    this.realmIndex = 0;         // 0, 1, 2
+    this.realm = '炼气期';       // 炼气期 → 筑基期 → 金丹期 → 元婴期
+    this.realmIndex = 0;         // 0, 1, 2, 3
     this.currentFloor = 0;
     this.isBossFight = false;
+
+    // Phase 4: relic tracking
+    this._swordCardsPlayed = 0;
+    this._nextSwordDiscount = 0;
+    this._bloodDamageTaken = 0;
+    this._damagedThisTurn = false;
+    this._deathSaveUsed = false;
   }
 
   // Relic helpers
@@ -30,7 +37,18 @@ export class Player {
   addRelic(relic) {
     if (!this.hasRelic(relic.id)) {
       this.relics.push(relic);
+      // On-acquire effects
+      if (relic.effect && relic.effect.type === 'onAcquire') {
+        const a = relic.effect.apply;
+        if (a.maxHp) { this.maxHp += a.maxHp; this.hp += a.maxHp; }
+      }
     }
+  }
+
+  removeRandomRelic() {
+    if (this.relics.length === 0) return null;
+    const idx = Math.floor(Math.random() * this.relics.length);
+    return this.relics.splice(idx, 1)[0];
   }
 
   getRelicsByEffect(type) {
@@ -42,6 +60,10 @@ export class Player {
     this.block = 0;
     this.firstTurn = true;
     this.turnCount = 0;
+    this._swordCardsPlayed = 0;
+    this._nextSwordDiscount = 0;
+    this._damagedThisTurn = false;
+    this._deathSaveUsed = false;
     this.effects.clearAll();
 
     // Relic: battle start effects
@@ -50,6 +72,15 @@ export class Player {
       if (a.strength) this.effects.apply('strength', a.strength);
       if (a.block) this.addBlock(a.block);
       if (a.heal) this.heal(a.heal);
+      if (a.energy) this.energy += a.energy;
+    }
+  }
+
+  // Called by BattleScene after enemies are created to apply battleStartPoison
+  onBattleStartEnemies(enemies) {
+    for (const r of this.getRelicsByEffect('battleStartPoison')) {
+      const poison = r.effect.apply.poison || 0;
+      enemies.forEach(e => { if (e.isAlive()) e.effects.apply('poison', poison); });
     }
   }
 
@@ -61,12 +92,33 @@ export class Player {
     this.energy = this.maxEnergy;
     this.turnCount++;
 
+    // 金刚体: if damaged last turn, +2 strength
+    if (this._damagedThisTurn && this.hasRelic('vajra_body')) {
+      this.effects.apply('strength', 2);
+    }
+    this._damagedThisTurn = false;
+
     // Relic: turn start effects
     let extraDraw = 0;
     for (const r of this.getRelicsByEffect('turnStart')) {
       const a = r.effect.apply;
       if (a.energy) this.energy += a.energy;
       if (a.draw) extraDraw += a.draw;
+      if (a.block) this.addBlock(a.block);
+    }
+
+    // Conditional turn-start relics
+    for (const r of this.getRelicsByEffect('turnStartConditional')) {
+      const cond = r.effect.condition;
+      let applies = false;
+      if (cond === 'everyNTurns' && this.turnCount % r.effect.n === 0) applies = true;
+      if (cond === 'notFirstTurn' && this.turnCount > 1) applies = true;
+      if (applies) {
+        const a = r.effect.apply;
+        if (a.energy) this.energy += a.energy;
+        if (a.draw) extraDraw += a.draw;
+        if (a.block) this.addBlock(a.block);
+      }
     }
 
     const dot = this.effects.processTurnStart();
@@ -74,6 +126,17 @@ export class Player {
     const wasFirst = this.firstTurn;
     this.firstTurn = false;
     return { dotDamage: dot, firstTurn: wasFirst, extraDraw };
+  }
+
+  // Track sword cards for 剑匣 relic
+  onCardPlayed(card) {
+    if (card.tags && card.tags.includes('sword') && this.hasRelic('sword_case')) {
+      this._swordCardsPlayed++;
+      if (this._swordCardsPlayed >= 3) {
+        this._nextSwordDiscount = (this._nextSwordDiscount || 0) + 1;
+        this._swordCardsPlayed = 0;
+      }
+    }
   }
 
   // Check if status immunity is active (金钟罩)
@@ -90,11 +153,50 @@ export class Player {
     this.block -= blocked;
     const hpLoss = amount - blocked;
     this.hp = Math.max(0, this.hp - hpLoss);
+
+    if (hpLoss > 0) {
+      this._damagedThisTurn = true;
+      // 血祭魔典: track cumulative damage
+      if (this.hasRelic('blood_tome')) {
+        this._bloodDamageTaken += hpLoss;
+        const threshold = 5;
+        while (this._bloodDamageTaken >= threshold) {
+          this._bloodDamageTaken -= threshold;
+          this.effects.apply('strength', 1);
+        }
+      }
+    }
+
+    // 轮回镜: death save
+    if (this.hp <= 0 && !this._deathSaveUsed && this.hasRelic('reincarnation_mirror')) {
+      this._deathSaveUsed = true;
+      this.hp = Math.floor(this.maxHp * 0.5);
+      // Remove the relic (consumable)
+      this.relics = this.relics.filter(r => r.id !== 'reincarnation_mirror');
+    }
+
     return { blocked, hpLoss };
   }
 
   takeDirectDamage(amount) {
     this.hp = Math.max(0, this.hp - amount);
+    if (amount > 0) this._damagedThisTurn = true;
+
+    // Blood tome tracking for direct damage too
+    if (amount > 0 && this.hasRelic('blood_tome')) {
+      this._bloodDamageTaken += amount;
+      while (this._bloodDamageTaken >= 5) {
+        this._bloodDamageTaken -= 5;
+        this.effects.apply('strength', 1);
+      }
+    }
+
+    // Death save for direct damage
+    if (this.hp <= 0 && !this._deathSaveUsed && this.hasRelic('reincarnation_mirror')) {
+      this._deathSaveUsed = true;
+      this.hp = Math.floor(this.maxHp * 0.5);
+      this.relics = this.relics.filter(r => r.id !== 'reincarnation_mirror');
+    }
   }
 
   heal(amount) {
@@ -116,6 +218,10 @@ export class Player {
   }
 
   getCardCostModifier(card) {
+    // 双修法宝: both faction discounts apply
+    if (this.hasRelic('dual_cultivation')) {
+      if (card.tags && (card.tags.includes('orthodox') || card.tags.includes('demonic'))) return -1;
+    }
     if (this.faction === 'orthodox' && card.tags.includes('orthodox')) return -1;
     if (this.faction === 'demonic' && card.tags.includes('demonic')) return -1;
     return 0;
@@ -123,7 +229,7 @@ export class Player {
 
   getEffectiveCost(card) {
     let mod = this.getCardCostModifier(card);
-    // Sword discount from 无影剑法
+    // Sword discount from 无影剑法 or 剑匣
     if (this._nextSwordDiscount && card.tags && card.tags.includes('sword')) {
       mod -= this._nextSwordDiscount;
       this._nextSwordDiscount = 0;
@@ -134,6 +240,17 @@ export class Player {
   getExtraDamage(card) {
     let extra = this.effects.get('strength');
     if (this.faction === 'demonic' && this.firstTurn) extra += 1;
+
+    // 仙剑胚胎: sword cards +3 damage
+    if (card.tags && card.tags.includes('sword') && this.hasRelic('immortal_sword_embryo')) {
+      extra += 3;
+    }
+
+    // 符笔: talisman cards +2 damage
+    if (card.tags && card.tags.includes('talisman') && this.hasRelic('talisman_pen')) {
+      extra += 2;
+    }
+
     return extra;
   }
 
@@ -144,17 +261,48 @@ export class Player {
   }
 
   // Realm breakthrough
-  breakthrough() {
+  breakthrough(allRelics) {
     if (this.realmIndex === 0) {
       this.realm = '筑基期';
       this.realmIndex = 1;
       this.maxHp += 10;
       this.hp = Math.min(this.hp + 10, this.maxHp);
+      this.maxEnergy += 1;
+      return { bonusText: '+10 最大HP, +1 灵气上限' };
     } else if (this.realmIndex === 1) {
       this.realm = '金丹期';
       this.realmIndex = 2;
+      this.maxHp += 15;
+      this.hp = Math.min(this.hp + 15, this.maxHp);
       this.maxEnergy += 1;
+      // Grant random uncommon relic
+      let relicGrant = null;
+      if (allRelics) {
+        const available = allRelics.filter(r => r.rarity === 'uncommon' && !this.hasRelic(r.id));
+        if (available.length > 0) {
+          relicGrant = available[Math.floor(Math.random() * available.length)];
+          this.addRelic(relicGrant);
+        }
+      }
+      return { bonusText: `+15 最大HP, +1 灵气上限${relicGrant ? `, 获得法宝: ${relicGrant.icon} ${relicGrant.name}` : ''}` };
+    } else if (this.realmIndex === 2) {
+      this.realm = '元婴期';
+      this.realmIndex = 3;
+      this.maxHp += 20;
+      this.hp = Math.min(this.hp + 20, this.maxHp);
+      this.maxEnergy += 1;
+      // Grant random rare relic
+      let relicGrant = null;
+      if (allRelics) {
+        const available = allRelics.filter(r => r.rarity === 'rare' && !this.hasRelic(r.id));
+        if (available.length > 0) {
+          relicGrant = available[Math.floor(Math.random() * available.length)];
+          this.addRelic(relicGrant);
+        }
+      }
+      return { bonusText: `+20 最大HP, +1 灵气上限${relicGrant ? `, 获得法宝: ${relicGrant.icon} ${relicGrant.name}` : ''}` };
     }
+    return { bonusText: '已达最高境界' };
   }
 
   // Shop discount from relics
