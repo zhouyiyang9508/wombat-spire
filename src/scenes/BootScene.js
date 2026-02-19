@@ -15,6 +15,7 @@ export class BootScene extends Phaser.Scene {
     this.load.json('enemies', 'src/data/enemies.json');
     this.load.json('relics', 'src/data/relics.json');
     this.load.json('events', 'src/data/events.json');
+    this.load.json('classes', 'src/data/classes.json');
   }
 
   create() {

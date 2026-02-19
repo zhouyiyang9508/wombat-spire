@@ -2,9 +2,11 @@
 import { Effects } from './Effects.js';
 
 export class Player {
-  constructor(faction = 'orthodox') {
+  constructor(faction = 'orthodox', classId = null, classDef = null) {
     this.faction = faction;
-    this.maxHp = faction === 'orthodox' ? 75 : 70;
+    this.classId = classId;       // 'sword' | 'talisman' | 'poison'
+    this.classDef = classDef;     // full class definition
+    this.maxHp = classDef ? classDef.hp : (faction === 'orthodox' ? 75 : 70);
     this.hp = this.maxHp;
     this.block = 0;
     this.energy = 3;
@@ -20,6 +22,9 @@ export class Player {
     this.realmIndex = 0;         // 0, 1, 2, 3
     this.currentFloor = 0;
     this.isBossFight = false;
+
+    // Class passive tracking
+    this._firstSwordPlayedThisTurn = false;  // sword class passive
 
     // Phase 4: relic tracking
     this._swordCardsPlayed = 0;
@@ -64,6 +69,7 @@ export class Player {
     this._nextSwordDiscount = 0;
     this._damagedThisTurn = false;
     this._deathSaveUsed = false;
+    this._firstSwordPlayedThisTurn = false;
     this.effects.clearAll();
 
     // Relic: battle start effects
@@ -78,6 +84,10 @@ export class Player {
 
   // Called by BattleScene after enemies are created to apply battleStartPoison
   onBattleStartEnemies(enemies) {
+    // Class passive: poison cultivator - all enemies +1 poison
+    if (this.classId === 'poison') {
+      enemies.forEach(e => { if (e.isAlive()) e.effects.apply('poison', 1); });
+    }
     for (const r of this.getRelicsByEffect('battleStartPoison')) {
       const poison = r.effect.apply.poison || 0;
       enemies.forEach(e => { if (e.isAlive()) e.effects.apply('poison', poison); });
@@ -91,6 +101,12 @@ export class Player {
     }
     this.energy = this.maxEnergy;
     this.turnCount++;
+    this._firstSwordPlayedThisTurn = false;
+
+    // Class passive: talisman cultivator - +1 energy per turn
+    if (this.classId === 'talisman') {
+      this.energy += 1;
+    }
 
     // 金刚体: if damaged last turn, +2 strength
     if (this._damagedThisTurn && this.hasRelic('vajra_body')) {
@@ -130,6 +146,11 @@ export class Player {
 
   // Track sword cards for 剑匣 relic
   onCardPlayed(card) {
+    // Class passive: track first sword card played this turn
+    if (this.classId === 'sword' && !this._firstSwordPlayedThisTurn
+        && card.tags && card.tags.includes('sword')) {
+      this._firstSwordPlayedThisTurn = true;
+    }
     if (card.tags && card.tags.includes('sword') && this.hasRelic('sword_case')) {
       this._swordCardsPlayed++;
       if (this._swordCardsPlayed >= 3) {
@@ -229,6 +250,11 @@ export class Player {
 
   getEffectiveCost(card) {
     let mod = this.getCardCostModifier(card);
+    // Class passive: sword cultivator - first sword card each turn costs -1
+    if (this.classId === 'sword' && !this._firstSwordPlayedThisTurn
+        && card.tags && card.tags.includes('sword')) {
+      mod -= 1;
+    }
     // Sword discount from 无影剑法 or 剑匣
     if (this._nextSwordDiscount && card.tags && card.tags.includes('sword')) {
       mod -= this._nextSwordDiscount;

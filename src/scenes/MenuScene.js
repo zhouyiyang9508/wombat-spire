@@ -54,27 +54,119 @@ export class MenuScene extends Phaser.Scene {
       btn.on('pointerout', () => btn.setScale(1));
     });
 
-    orthodox.on('pointerdown', () => this.startGame('orthodox'));
-    demonic.on('pointerdown', () => this.startGame('demonic'));
+    orthodox.on('pointerdown', () => this._showClassSelection('orthodox'));
+    demonic.on('pointerdown', () => this._showClassSelection('demonic'));
   }
 
-  startGame(faction) {
+  _showClassSelection(faction) {
+    this.children.removeAll();
+    const w = this.cameras.main.width;
+    const h = this.cameras.main.height;
+    this.cameras.main.setBackgroundColor('#0a0a12');
+
+    const classes = this.cache.json.get('classes');
+
+    this.add.text(w / 2, 50, '选择你的修炼之道', {
+      fontSize: '28px', color: '#e8d5a3', fontFamily: 'serif',
+    }).setOrigin(0.5);
+
+    this.add.text(w / 2, 90, `已选派系：${faction === 'orthodox' ? '☯ 正道' : '👹 魔道'}`, {
+      fontSize: '16px', color: '#888', fontFamily: 'serif',
+    }).setOrigin(0.5);
+
+    const cardW = 220;
+    const gap = 30;
+    const totalW = classes.length * cardW + (classes.length - 1) * gap;
+    const baseX = (w - totalW) / 2;
+
+    classes.forEach((cls, i) => {
+      const cx = baseX + i * (cardW + gap);
+      const cy = 140;
+      const cardH = 320;
+
+      const bg = this.add.rectangle(cx + cardW / 2, cy + cardH / 2, cardW, cardH, 0x1a1a2e)
+        .setStrokeStyle(2, 0x444466);
+
+      this.add.text(cx + cardW / 2, cy + 20, cls.icon, {
+        fontSize: '40px',
+      }).setOrigin(0.5);
+
+      this.add.text(cx + cardW / 2, cy + 65, cls.name, {
+        fontSize: '22px', color: '#e8d5a3', fontFamily: 'serif', fontStyle: 'bold',
+      }).setOrigin(0.5);
+
+      this.add.text(cx + cardW / 2, cy + 90, cls.nameEn, {
+        fontSize: '12px', color: '#666', fontFamily: 'serif',
+      }).setOrigin(0.5);
+
+      this.add.text(cx + cardW / 2, cy + 120, `❤️ ${cls.hp} HP`, {
+        fontSize: '16px', color: '#ff8888', fontFamily: 'serif',
+      }).setOrigin(0.5);
+
+      // Passive
+      this.add.text(cx + cardW / 2, cy + 155, `被动：${cls.passive.name}`, {
+        fontSize: '15px', color: '#ffcc44', fontFamily: 'serif', fontStyle: 'bold',
+      }).setOrigin(0.5);
+
+      this.add.text(cx + cardW / 2, cy + 180, cls.passive.desc, {
+        fontSize: '12px', color: '#aaa', fontFamily: 'serif',
+        wordWrap: { width: cardW - 20 }, align: 'center',
+      }).setOrigin(0.5);
+
+      // Start deck summary
+      const deckNames = [
+        ...cls.startDeck.tagged.map(d => `${d.id}×${d.count}`),
+        ...cls.startDeck.common.map(d => `${d.id}×${d.count}`),
+      ].join('\n');
+      this.add.text(cx + cardW / 2, cy + 230, '起始卡组:', {
+        fontSize: '12px', color: '#88aacc', fontFamily: 'serif',
+      }).setOrigin(0.5);
+      this.add.text(cx + cardW / 2, cy + 260, deckNames, {
+        fontSize: '10px', color: '#777', fontFamily: 'serif',
+        wordWrap: { width: cardW - 16 }, align: 'center', lineSpacing: 2,
+      }).setOrigin(0.5);
+
+      // Click area
+      const hitArea = this.add.rectangle(cx + cardW / 2, cy + cardH / 2, cardW, cardH, 0x000000, 0)
+        .setInteractive({ useHandCursor: true });
+
+      hitArea.on('pointerover', () => bg.setStrokeStyle(2, 0xffcc44));
+      hitArea.on('pointerout', () => bg.setStrokeStyle(2, 0x444466));
+      hitArea.on('pointerdown', () => this.startGame(faction, cls.id));
+    });
+
+    // Back button
+    const backBtn = this.add.text(w / 2, h - 40, '← 返回选择派系', {
+      fontSize: '16px', color: '#aaa', fontFamily: 'serif',
+      backgroundColor: '#222', padding: { x: 16, y: 8 },
+    }).setOrigin(0.5).setInteractive({ useHandCursor: true });
+    backBtn.on('pointerdown', () => this.scene.restart());
+  }
+
+  startGame(faction, classId) {
     const allCards = this.cache.json.get('cards');
-    const player = new Player(faction);
+    const classes = this.cache.json.get('classes');
+    const classDef = classes.find(c => c.id === classId);
 
-    // Build initial deck
-    const factionTag = faction;
-    const oppositeTag = faction === 'orthodox' ? 'demonic' : 'orthodox';
-    const factionCards = allCards.filter(c => c.tags.includes(factionTag));
-    const neutralCards = allCards.filter(c => c.tags.includes('neutral'));
-    const oppositeCards = allCards.filter(c => c.tags.includes(oppositeTag));
+    const player = new Player(faction, classId, classDef);
 
-    const pick = (arr, n) => [...arr].sort(() => Math.random() - 0.5).slice(0, n);
-    const deck = [
-      ...pick(factionCards, 4),
-      ...pick(neutralCards, 4),
-      ...pick(oppositeCards, 2),
-    ].map(c => ({ ...c })); // deep copy
+    // Build initial deck from class definition
+    const cardMap = {};
+    allCards.forEach(c => { cardMap[c.id] = c; });
+
+    const deck = [];
+    const addCards = (list) => {
+      list.forEach(entry => {
+        const template = cardMap[entry.id];
+        if (template) {
+          for (let i = 0; i < entry.count; i++) {
+            deck.push({ ...template });
+          }
+        }
+      });
+    };
+    addCards(classDef.startDeck.tagged);
+    addCards(classDef.startDeck.common);
 
     this.scene.start('MapScene', {
       player,

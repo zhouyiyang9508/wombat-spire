@@ -1,0 +1,73 @@
+[
+  {
+    "id": "sword",
+    "name": "剑修",
+    "nameEn": "Sword Cultivator",
+    "icon": "⚔️",
+    "hp": 70,
+    "passive": {
+      "name": "剑意",
+      "desc": "每回合第1张剑修牌费用-1",
+      "type": "firstSwordDiscount"
+    },
+    "startDeck": {
+      "tagged": [
+        { "id": "yujian", "count": 3 },
+        { "id": "jianqi_changhong", "count": 2 },
+        { "id": "jianzhen", "count": 2 }
+      ],
+      "common": [
+        { "id": "wind_ride", "count": 2 },
+        { "id": "light_shield", "count": 1 }
+      ]
+    }
+  },
+  {
+    "id": "talisman",
+    "name": "符修",
+    "nameEn": "Talisman Cultivator",
+    "icon": "📜",
+    "hp": 75,
+    "passive": {
+      "name": "聚灵",
+      "desc": "每回合开始时回复1点灵气",
+      "type": "turnStartEnergy"
+    },
+    "startDeck": {
+      "tagged": [
+        { "id": "huofu", "count": 2 },
+        { "id": "hushen_fu", "count": 2 },
+        { "id": "juling_fu", "count": 2 }
+      ],
+      "common": [
+        { "id": "wind_ride", "count": 2 },
+        { "id": "light_shield", "count": 1 },
+        { "id": "sword_qi", "count": 1 }
+      ]
+    }
+  },
+  {
+    "id": "poison",
+    "name": "毒修",
+    "nameEn": "Poison Cultivator",
+    "icon": "🧪",
+    "hp": 65,
+    "passive": {
+      "name": "蛊养",
+      "desc": "战斗开始时，所有敌人+1层毒",
+      "type": "battleStartPoison"
+    },
+    "startDeck": {
+      "tagged": [
+        { "id": "duwu", "count": 3 },
+        { "id": "gudu_qianghua", "count": 2 },
+        { "id": "duyan_miman", "count": 2 }
+      ],
+      "common": [
+        { "id": "wind_ride", "count": 1 },
+        { "id": "light_shield", "count": 1 },
+        { "id": "sword_qi", "count": 1 }
+      ]
+    }
+  }
+]

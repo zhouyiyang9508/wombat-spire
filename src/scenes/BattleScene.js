@@ -200,8 +200,11 @@ export class BattleScene extends Phaser.Scene {
     this.playerHpText.setText(`❤️ ${p.hp}/${p.maxHp}`);
     this.playerBlockText.setText(p.block > 0 ? `🛡️ 护盾: ${p.block}` : '');
     this.playerEnergyText.setText(`💎 灵气: ${p.energy}/${p.maxEnergy}`);
-    this.factionText.setText(p.faction === 'orthodox' ? '☯ 正道' : '👹 魔道');
-    this.goldRealmText.setText(`${p.realm} · 💰${p.gold}`);
+    const factionStr = p.faction === 'orthodox' ? '☯ 正道' : '👹 魔道';
+    const classStr = p.classDef ? `${p.classDef.icon} ${p.classDef.name}` : '';
+    this.factionText.setText(`${factionStr} ${classStr}`);
+    const passiveStr = p.classDef ? ` · ${p.classDef.passive.name}` : '';
+    this.goldRealmText.setText(`${p.realm}${passiveStr} · 💰${p.gold}`);
     const eff = p.effects.getDisplayList();
     this.playerEffectsText.setText(eff.map(e => `${e.icon}${e.stacks}`).join(' '));
   }
