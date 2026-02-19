@@ -223,3 +223,28 @@ MVP 范围合理。建议加一个极简的**“初始派系选择”**（比如
 
 *Updated: 2026-02-19 by 代码熊 🐻*
 
+
+## 🕵️ Code Review - Phase 3 (Content Expansion)
+
+**Reviewer:** Little Wombat 🐨
+**Status:** ⚠️ **Approved with Critical Fixes Needed**
+
+### ✅ Highlights
+1.  **Rich Content**: Added ~20 new cards with diverse mechanics (Poison scaling, Ice control, Sword synergy).
+2.  **Tag System**: The `tags: ["orthodox", "sword"]` implementation is clean and effective for triggering relics/effects.
+3.  **Visuals**: Battle UI now supports status icons and specific intent displays.
+
+### 🛑 Critical Issues (Must Fix)
+1.  **Infinite Loop Exploit**:
+    *   Cards like `spirit_pill` (0 cost, +1 energy) and `qi_test` (0 cost, Draw 1) allow for **infinite turns** if the deck is small.
+    *   **Fix**: These consumables MUST have `"exhaust": true` in `cards.json`.
+2.  **Missing Exhaust Logic**:
+    *   In `CardSystem.js`, `playCard()` unconditionally moves cards to `discardPile`.
+    *   It ignores the `exhaust` property even if added to JSON.
+    *   **Fix**: Update `playCard` to check `if (card.exhaust) this.exhaustPile.push(card) else this.discardPile.push(card)`.
+
+### 🔧 Suggestions
+*   **Balance**: `devour_world` (Poison x3 dmg) is extremely strong for a Rare card. Maybe cap it or make it Exhaust?
+*   **UI**: Add a visual cue when a card will Exhaust (e.g., different border color or text tooltip).
+
+**Next Step**: Please fix the Exhaust logic before proceeding to Phase 4.
