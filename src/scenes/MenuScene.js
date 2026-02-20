@@ -166,10 +166,18 @@ export class MenuScene extends Phaser.Scene {
 
       // Start deck summary – show on desktop and portrait (cards are tall enough)
       if (cardH >= 210) {
-        const deckNames = [
-          ...cls.startDeck.tagged.map(d => `${d.id}×${d.count}`),
-          ...cls.startDeck.common.map(d => `${d.id}×${d.count}`),
-        ].join('\n');
+        // Get card names from cards.json
+        const allCards = this.cache.json.get('cards');
+        const cardMap = {};
+        allCards.forEach(c => { cardMap[c.id] = c.name; });
+        
+        // Deck display with Chinese names, use '、' separator
+        const deckList = [
+          ...cls.startDeck.tagged.map(d => `${cardMap[d.id] || d.id}×${d.count}`),
+          ...cls.startDeck.common.map(d => `${cardMap[d.id] || d.id}×${d.count}`),
+        ];
+        const deckNames = deckList.join('、');
+        
         const deckLabelY = useVertical ? cy + 190 : cy + 230;
         const deckTextY = useVertical ? cy + 210 : cy + 260;
         const deckSize = useVertical ? 11 : Math.floor(10 * scale);
