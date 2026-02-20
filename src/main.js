@@ -14,10 +14,12 @@ import { VictoryScene } from './scenes/VictoryScene.js';
 const isMobile = window.innerWidth < 768;
 const isPortrait = window.innerHeight > window.innerWidth;
 
+// Mobile portrait: reduce canvas height to fit cards in viewport
+// Canvas 600×700 + card hand 140px = 840px total (fits most phones)
 const config = {
   type: Phaser.AUTO,
   width: isMobile && isPortrait ? 600 : 900,
-  height: isMobile && isPortrait ? 900 : 650,
+  height: isMobile && isPortrait ? 700 : 650,
   parent: 'game-container',
   backgroundColor: '#0a0a12',
   scene: [BootScene, MenuScene, MapScene, BattleScene, RewardScene, EventScene, ShopScene, RestScene, BreakthroughScene, VictoryScene],

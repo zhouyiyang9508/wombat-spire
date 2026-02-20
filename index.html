@@ -189,13 +189,15 @@
         min-height: 100vh;
       }
 
+      /* Mobile portrait: Canvas 700px + cards 140px = 840px total */
       #game-container {
-        height: calc(100vh - 160px);
+        height: 700px;
+        max-height: calc(100vh - 140px);
       }
 
       #card-hand {
-        height: 160px;
-        padding: 0 10px 5px;
+        height: 140px;
+        padding: 0 8px 5px;
         gap: 2px;
       }
 
