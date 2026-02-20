@@ -405,12 +405,13 @@
     "name": "聚灵符",
     "type": "skill",
     "cost": 0,
-    "desc": "回复 2 点灵气",
+    "desc": "回复 2 点灵气【消耗】",
     "effect": { "energy": 2 },
+    "exhaust": true,
     "rarity": "uncommon",
     "realm": "炼气期",
     "tags": ["talisman", "skill"],
-    "upgraded": { "desc": "回复 2 点灵气，抽 1 张牌", "effect": { "energy": 2, "draw": 1 } }
+    "upgraded": { "desc": "回复 2 点灵气，抽 1 张牌【消耗】", "effect": { "energy": 2, "draw": 1 } }
   },
 
   {

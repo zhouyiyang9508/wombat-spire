@@ -237,6 +237,16 @@ export class BattleScene extends Phaser.Scene {
     const turnInfo = this.player.startTurn();
     if (turnInfo.dotDamage > 0) this.addLog(`你受到 ${turnInfo.dotDamage} 点持续伤害`);
     if (!this.player.isAlive()) { this.gameOver(false); return; }
+    
+    // 🧪 毒修被动：已中毒敌人每回合毒层+1
+    if (this.player.classId === 'poison') {
+      this.enemies.forEach(e => {
+        if (e.isAlive() && e.effects.has('poison')) {
+          e.effects.apply('poison', 1);
+        }
+      });
+    }
+    
     const drawCount = 5 + (turnInfo.extraDraw || 0);
     this.cardSystem.drawCards(drawCount);
     this.refreshUI();

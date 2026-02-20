@@ -54,8 +54,8 @@
     "hp": 65,
     "passive": {
       "name": "蛊养",
-      "desc": "战斗开始时，所有敌人+1层毒",
-      "type": "battleStartPoison"
+      "desc": "战斗开始时所有敌人+1层毒；已中毒敌人每回合额外+1层毒",
+      "type": "poisonAmplify"
     },
     "startDeck": {
       "tagged": [
