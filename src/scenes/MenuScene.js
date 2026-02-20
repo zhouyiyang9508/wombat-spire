@@ -15,8 +15,8 @@ export class MenuScene extends Phaser.Scene {
     const cardHand = document.getElementById('card-hand');
     if (cardHand) cardHand.innerHTML = '';
 
-    // 📱 Responsive font sizes
-    const scale = Math.min(w / 900, 1); // Base width 900px
+    // 📱 Responsive font sizes (minimum scale 0.7 for readability)
+    const scale = Math.max(0.7, Math.min(w / 900, 1));
     const titleSize = Math.floor(42 * scale);
     const subtitleSize = Math.floor(20 * scale);
     const phaseSize = Math.floor(16 * scale);
@@ -77,8 +77,8 @@ export class MenuScene extends Phaser.Scene {
 
     const classes = this.cache.json.get('classes');
 
-    // 📱 Responsive sizing
-    const scale = Math.min(w / 900, 1);
+    // 📱 Responsive sizing (minimum scale 0.7 for readability)
+    const scale = Math.max(0.7, Math.min(w / 900, 1));
     const headingSize = Math.floor(28 * scale);
     const labelSize = Math.floor(16 * scale);
 
