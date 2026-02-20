@@ -72,13 +72,18 @@ export class RestScene extends Phaser.Scene {
       return;
     }
 
+    // 📱 Responsive layout
+    const isMobile = w <= 600;
+    const isPortrait = h > w;
+    const useVertical = isMobile || isPortrait;
+    
     // Pagination setup
-    const cardsPerPage = 8;
-    const cols = 4;
-    const cardW = 200;
-    const cardH = 120;
-    const gapX = 16;
-    const gapY = 16;
+    const cols = useVertical ? 2 : 4; // Mobile: 2 columns; Desktop: 4 columns
+    const cardsPerPage = useVertical ? 6 : 8; // Mobile: 6 per page; Desktop: 8
+    const cardW = useVertical ? Math.floor((w - 60) / 2) : 200; // Mobile: fit 2 cols
+    const cardH = useVertical ? 110 : 120;
+    const gapX = useVertical ? 12 : 16;
+    const gapY = useVertical ? 12 : 16;
     const startY = 90;
     let page = 0;
     const totalPages = Math.ceil(upgradeable.length / cardsPerPage);
@@ -102,22 +107,26 @@ export class RestScene extends Phaser.Scene {
         const bg = this.add.rectangle(cx + cardW / 2, cy + cardH / 2, cardW, cardH, 0x1a1a2e)
           .setStrokeStyle(1, 0x444466);
 
+        const fontSize = useVertical ? 12 : 14;
+        const descFontSize = useVertical ? 10 : 11;
+        const arrowFontSize = useVertical ? 10 : 12;
+
         const nameText = this.add.text(cx + 8, cy + 6, card.name, {
-          fontSize: '14px', color: '#ffcc44', fontFamily: 'serif', fontStyle: 'bold',
+          fontSize: `${fontSize}px`, color: '#ffcc44', fontFamily: 'serif', fontStyle: 'bold',
         });
 
-        const descText = this.add.text(cx + 8, cy + 26, card.desc, {
-          fontSize: '11px', color: '#aaa', fontFamily: 'serif',
+        const descText = this.add.text(cx + 8, cy + 24, card.desc, {
+          fontSize: `${descFontSize}px`, color: '#aaa', fontFamily: 'serif',
           wordWrap: { width: cardW - 16 },
         });
 
-        const arrowText = this.add.text(cx + 8, cy + 50, `→ ${upg.desc}`, {
-          fontSize: '12px', color: '#66ff66', fontFamily: 'serif',
+        const arrowText = this.add.text(cx + 8, cy + 48, `→ ${upg.desc}`, {
+          fontSize: `${arrowFontSize}px`, color: '#66ff66', fontFamily: 'serif',
           wordWrap: { width: cardW - 16 },
         });
 
         const costText = this.add.text(cx + cardW - 8, cy + 6, `${card.cost}💎`, {
-          fontSize: '12px', color: '#88aaff', fontFamily: 'serif',
+          fontSize: `${descFontSize}px`, color: '#88aaff', fontFamily: 'serif',
         }).setOrigin(1, 0);
 
         const hitArea = this.add.rectangle(cx + cardW / 2, cy + cardH / 2, cardW, cardH, 0x000000, 0)
