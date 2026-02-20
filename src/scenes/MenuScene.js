@@ -15,38 +15,49 @@ export class MenuScene extends Phaser.Scene {
     const cardHand = document.getElementById('card-hand');
     if (cardHand) cardHand.innerHTML = '';
 
+    // 📱 Responsive font sizes
+    const scale = Math.min(w / 900, 1); // Base width 900px
+    const titleSize = Math.floor(42 * scale);
+    const subtitleSize = Math.floor(20 * scale);
+    const phaseSize = Math.floor(16 * scale);
+    const headingSize = Math.floor(24 * scale);
+
     this.add.text(w / 2, 100, '🗡️ 修仙塔 · Wombat Spire', {
-      fontSize: '42px', color: '#e8d5a3', fontFamily: 'serif',
+      fontSize: `${titleSize}px`, color: '#e8d5a3', fontFamily: 'serif',
     }).setOrigin(0.5);
 
     this.add.text(w / 2, 160, '通天灵塔，道魔之争', {
-      fontSize: '20px', color: '#888', fontFamily: 'serif',
+      fontSize: `${subtitleSize}px`, color: '#888', fontFamily: 'serif',
     }).setOrigin(0.5);
 
     this.add.text(w / 2, 220, 'Phase 2: 地图 · 遗物 · 商店 · 事件', {
-      fontSize: '16px', color: '#666', fontFamily: 'serif',
+      fontSize: `${phaseSize}px`, color: '#666', fontFamily: 'serif',
     }).setOrigin(0.5);
 
     this.add.text(w / 2, 280, '选择你的道路', {
-      fontSize: '24px', color: '#ccc', fontFamily: 'serif',
+      fontSize: `${headingSize}px`, color: '#ccc', fontFamily: 'serif',
     }).setOrigin(0.5);
 
-    const orthodox = this.add.text(w / 2 - 150, 360, '☯ 修炼正道', {
-      fontSize: '26px', color: '#66ccff', fontFamily: 'serif',
+    const btnSize = Math.floor(26 * scale);
+    const descSize = Math.floor(14 * scale);
+    const spacing = Math.floor(150 * scale);
+
+    const orthodox = this.add.text(w / 2 - spacing, 360, '☯ 修炼正道', {
+      fontSize: `${btnSize}px`, color: '#66ccff', fontFamily: 'serif',
       backgroundColor: '#1a1a30', padding: { x: 20, y: 12 },
     }).setOrigin(0.5).setInteractive({ useHandCursor: true });
 
-    this.add.text(w / 2 - 150, 420, '初始 +5 HP\n正道卡牌 -1 灵气', {
-      fontSize: '14px', color: '#88aacc', fontFamily: 'serif', align: 'center',
+    this.add.text(w / 2 - spacing, 420, '初始 +5 HP\n正道卡牌 -1 灵气', {
+      fontSize: `${descSize}px`, color: '#88aacc', fontFamily: 'serif', align: 'center',
     }).setOrigin(0.5);
 
-    const demonic = this.add.text(w / 2 + 150, 360, '👹 堕入魔道', {
-      fontSize: '26px', color: '#ff6666', fontFamily: 'serif',
+    const demonic = this.add.text(w / 2 + spacing, 360, '👹 堕入魔道', {
+      fontSize: `${btnSize}px`, color: '#ff6666', fontFamily: 'serif',
       backgroundColor: '#301a1a', padding: { x: 20, y: 12 },
     }).setOrigin(0.5).setInteractive({ useHandCursor: true });
 
-    this.add.text(w / 2 + 150, 420, '首回合卡牌 +1 伤害\n魔道卡牌 -1 灵气', {
-      fontSize: '14px', color: '#cc8888', fontFamily: 'serif', align: 'center',
+    this.add.text(w / 2 + spacing, 420, '首回合卡牌 +1 伤害\n魔道卡牌 -1 灵气', {
+      fontSize: `${descSize}px`, color: '#cc8888', fontFamily: 'serif', align: 'center',
     }).setOrigin(0.5);
 
     [orthodox, demonic].forEach(btn => {
@@ -66,50 +77,61 @@ export class MenuScene extends Phaser.Scene {
 
     const classes = this.cache.json.get('classes');
 
+    // 📱 Responsive sizing
+    const scale = Math.min(w / 900, 1);
+    const headingSize = Math.floor(28 * scale);
+    const labelSize = Math.floor(16 * scale);
+
     this.add.text(w / 2, 50, '选择你的修炼之道', {
-      fontSize: '28px', color: '#e8d5a3', fontFamily: 'serif',
+      fontSize: `${headingSize}px`, color: '#e8d5a3', fontFamily: 'serif',
     }).setOrigin(0.5);
 
     this.add.text(w / 2, 90, `已选派系：${faction === 'orthodox' ? '☯ 正道' : '👹 魔道'}`, {
-      fontSize: '16px', color: '#888', fontFamily: 'serif',
+      fontSize: `${labelSize}px`, color: '#888', fontFamily: 'serif',
     }).setOrigin(0.5);
 
-    const cardW = 220;
-    const gap = 30;
+    const cardW = Math.floor(220 * scale);
+    const gap = Math.floor(30 * scale);
     const totalW = classes.length * cardW + (classes.length - 1) * gap;
     const baseX = (w - totalW) / 2;
 
     classes.forEach((cls, i) => {
       const cx = baseX + i * (cardW + gap);
       const cy = 140;
-      const cardH = 320;
+      const cardH = Math.floor(320 * scale);
 
       const bg = this.add.rectangle(cx + cardW / 2, cy + cardH / 2, cardW, cardH, 0x1a1a2e)
         .setStrokeStyle(2, 0x444466);
 
+      const iconSize = Math.floor(40 * scale);
+      const nameSize = Math.floor(22 * scale);
+      const subSize = Math.floor(12 * scale);
+      const statSize = Math.floor(16 * scale);
+      const passiveSize = Math.floor(15 * scale);
+
       this.add.text(cx + cardW / 2, cy + 20, cls.icon, {
-        fontSize: '40px',
+        fontSize: `${iconSize}px`,
       }).setOrigin(0.5);
 
       this.add.text(cx + cardW / 2, cy + 65, cls.name, {
-        fontSize: '22px', color: '#e8d5a3', fontFamily: 'serif', fontStyle: 'bold',
+        fontSize: `${nameSize}px`, color: '#e8d5a3', fontFamily: 'serif', fontStyle: 'bold',
       }).setOrigin(0.5);
 
       this.add.text(cx + cardW / 2, cy + 90, cls.nameEn, {
-        fontSize: '12px', color: '#666', fontFamily: 'serif',
+        fontSize: `${subSize}px`, color: '#666', fontFamily: 'serif',
       }).setOrigin(0.5);
 
       this.add.text(cx + cardW / 2, cy + 120, `❤️ ${cls.hp} HP`, {
-        fontSize: '16px', color: '#ff8888', fontFamily: 'serif',
+        fontSize: `${statSize}px`, color: '#ff8888', fontFamily: 'serif',
       }).setOrigin(0.5);
 
       // Passive
       this.add.text(cx + cardW / 2, cy + 155, `被动：${cls.passive.name}`, {
-        fontSize: '15px', color: '#ffcc44', fontFamily: 'serif', fontStyle: 'bold',
+        fontSize: `${passiveSize}px`, color: '#ffcc44', fontFamily: 'serif', fontStyle: 'bold',
       }).setOrigin(0.5);
 
       this.add.text(cx + cardW / 2, cy + 180, cls.passive.desc, {
-        fontSize: '12px', color: '#aaa', fontFamily: 'serif',
+        fontSize: `${subSize}px`, color: '#aaa', fontFamily: 'serif',
         wordWrap: { width: cardW - 20 }, align: 'center',
       }).setOrigin(0.5);
 
@@ -119,10 +141,11 @@ export class MenuScene extends Phaser.Scene {
         ...cls.startDeck.common.map(d => `${d.id}×${d.count}`),
       ].join('\n');
       this.add.text(cx + cardW / 2, cy + 230, '起始卡组:', {
-        fontSize: '12px', color: '#88aacc', fontFamily: 'serif',
+        fontSize: `${subSize}px`, color: '#88aacc', fontFamily: 'serif',
       }).setOrigin(0.5);
+      const deckSize = Math.floor(10 * scale);
       this.add.text(cx + cardW / 2, cy + 260, deckNames, {
-        fontSize: '10px', color: '#777', fontFamily: 'serif',
+        fontSize: `${deckSize}px`, color: '#777', fontFamily: 'serif',
         wordWrap: { width: cardW - 16 }, align: 'center', lineSpacing: 2,
       }).setOrigin(0.5);
 
@@ -136,8 +159,9 @@ export class MenuScene extends Phaser.Scene {
     });
 
     // Back button
+    const backBtnSize = Math.floor(16 * scale);
     const backBtn = this.add.text(w / 2, h - 40, '← 返回选择派系', {
-      fontSize: '16px', color: '#aaa', fontFamily: 'serif',
+      fontSize: `${backBtnSize}px`, color: '#aaa', fontFamily: 'serif',
       backgroundColor: '#222', padding: { x: 16, y: 8 },
     }).setOrigin(0.5).setInteractive({ useHandCursor: true });
     backBtn.on('pointerdown', () => this.scene.restart());
