@@ -91,35 +91,51 @@ export class MenuScene extends Phaser.Scene {
     }).setOrigin(0.5);
 
     // 📱 Mobile: vertical layout; Desktop: horizontal layout
-    const isMobile = w < 600;
-    const cardW = isMobile ? Math.min(280, w - 40) : Math.floor(220 * scale);
-    const gap = isMobile ? 35 : Math.floor(30 * scale);
-    const cardH = isMobile ? 180 : Math.floor(320 * scale);
-    
+    const isMobile = w <= 600;
+    const isPortrait = h > w;
+    const useVertical = isMobile || isPortrait;
+
+    // Card dimensions adapted to layout
+    let cardW, cardH, gap;
+    if (useVertical) {
+      cardW = Math.min(400, w - 40);
+      // Distribute available height: top 100px for header, bottom 50px for back btn
+      const availH = h - 150;
+      gap = 20;
+      cardH = Math.min(230, Math.floor((availH - (classes.length - 1) * gap) / classes.length));
+    } else {
+      cardW = Math.floor(220 * scale);
+      gap = Math.floor(30 * scale);
+      cardH = Math.floor(320 * scale);
+    }
+
     const totalW = classes.length * cardW + (classes.length - 1) * gap;
-    const baseX = isMobile ? (w - cardW) / 2 : (w - totalW) / 2;
-    const baseY = isMobile ? 120 : 140;
+    const totalH = classes.length * cardH + (classes.length - 1) * gap;
+    const baseX = useVertical ? (w - cardW) / 2 : (w - totalW) / 2;
+    // Center cards vertically in available space for portrait
+    const baseY = useVertical ? Math.floor(110 + ((h - 150) - totalH) / 2) : 140;
 
     classes.forEach((cls, i) => {
-      const cx = isMobile ? baseX : (baseX + i * (cardW + gap));
-      const cy = isMobile ? (baseY + i * (cardH + gap)) : baseY;
+      const cx = useVertical ? baseX : (baseX + i * (cardW + gap));
+      const cy = useVertical ? (baseY + i * (cardH + gap)) : baseY;
 
       const bg = this.add.rectangle(cx + cardW / 2, cy + cardH / 2, cardW, cardH, 0x1a1a2e)
         .setStrokeStyle(2, 0x444466);
 
-      const iconSize = isMobile ? 36 : Math.floor(40 * scale);
-      const nameSize = isMobile ? 20 : Math.floor(22 * scale);
-      const subSize = isMobile ? 11 : Math.floor(12 * scale);
-      const statSize = isMobile ? 15 : Math.floor(16 * scale);
-      const passiveSize = isMobile ? 14 : Math.floor(15 * scale);
+      // 📱 Portrait cards are wider → use larger, more readable fonts
+      const iconSize = useVertical ? 40 : Math.floor(40 * scale);
+      const nameSize = useVertical ? 22 : Math.floor(22 * scale);
+      const subSize = useVertical ? 13 : Math.floor(12 * scale);
+      const statSize = useVertical ? 17 : Math.floor(16 * scale);
+      const passiveSize = useVertical ? 16 : Math.floor(15 * scale);
 
-      // Layout: mobile uses tighter spacing
-      const yIcon = isMobile ? cy + 15 : cy + 20;
-      const yName = isMobile ? cy + 45 : cy + 65;
-      const yNameEn = cy + 90;
-      const yHP = isMobile ? cy + 75 : cy + 120;
-      const yPassiveName = isMobile ? cy + 105 : cy + 155;
-      const yPassiveDesc = isMobile ? cy + 130 : cy + 180;
+      // Vertical positions within each card
+      const yIcon = cy + 22;
+      const yName = useVertical ? cy + 58 : cy + 65;
+      const yNameEn = useVertical ? cy + 82 : cy + 90;
+      const yHP = useVertical ? cy + 108 : cy + 120;
+      const yPassiveName = useVertical ? cy + 138 : cy + 155;
+      const yPassiveDesc = useVertical ? cy + 165 : cy + 180;
 
       this.add.text(cx + cardW / 2, yIcon, cls.icon, {
         fontSize: `${iconSize}px`,
@@ -129,12 +145,10 @@ export class MenuScene extends Phaser.Scene {
         fontSize: `${nameSize}px`, color: '#e8d5a3', fontFamily: 'serif', fontStyle: 'bold',
       }).setOrigin(0.5);
 
-      // Desktop only: show English name
-      if (!isMobile) {
-        this.add.text(cx + cardW / 2, yNameEn, cls.nameEn, {
-          fontSize: `${subSize}px`, color: '#666', fontFamily: 'serif',
-        }).setOrigin(0.5);
-      }
+      // Show English name (fits in portrait cards too)
+      this.add.text(cx + cardW / 2, yNameEn, cls.nameEn, {
+        fontSize: `${subSize}px`, color: '#666', fontFamily: 'serif',
+      }).setOrigin(0.5);
 
       this.add.text(cx + cardW / 2, yHP, `❤️ ${cls.hp} HP`, {
         fontSize: `${statSize}px`, color: '#ff8888', fontFamily: 'serif',
@@ -147,20 +161,22 @@ export class MenuScene extends Phaser.Scene {
 
       this.add.text(cx + cardW / 2, yPassiveDesc, cls.passive.desc, {
         fontSize: `${subSize}px`, color: '#aaa', fontFamily: 'serif',
-        wordWrap: { width: cardW - 20 }, align: 'center',
+        wordWrap: { width: cardW - 24 }, align: 'center',
       }).setOrigin(0.5);
 
-      // Start deck summary (desktop only to save space on mobile)
-      if (!isMobile) {
+      // Start deck summary – show on desktop and portrait (cards are tall enough)
+      if (cardH >= 210) {
         const deckNames = [
           ...cls.startDeck.tagged.map(d => `${d.id}×${d.count}`),
           ...cls.startDeck.common.map(d => `${d.id}×${d.count}`),
         ].join('\n');
-        this.add.text(cx + cardW / 2, cy + 230, '起始卡组:', {
+        const deckLabelY = useVertical ? cy + 190 : cy + 230;
+        const deckTextY = useVertical ? cy + 210 : cy + 260;
+        const deckSize = useVertical ? 11 : Math.floor(10 * scale);
+        this.add.text(cx + cardW / 2, deckLabelY, '起始卡组:', {
           fontSize: `${subSize}px`, color: '#88aacc', fontFamily: 'serif',
         }).setOrigin(0.5);
-        const deckSize = Math.floor(10 * scale);
-        this.add.text(cx + cardW / 2, cy + 260, deckNames, {
+        this.add.text(cx + cardW / 2, deckTextY, deckNames, {
           fontSize: `${deckSize}px`, color: '#777', fontFamily: 'serif',
           wordWrap: { width: cardW - 16 }, align: 'center', lineSpacing: 2,
         }).setOrigin(0.5);
