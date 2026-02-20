@@ -42,24 +42,53 @@ export class RewardScene extends Phaser.Scene {
     }).setOrigin(0.5);
     yOff += 40;
 
-    const cardChoices = this._pickCards(allCards, 3);
-    let cx = w / 2 - 200;
-    cardChoices.forEach(card => {
-      const box = this.add.text(cx, yOff, `${card.name}\n费用:${card.cost} ${card.type === 'attack' ? '攻击' : card.type === 'skill' ? '技能' : '能力'}\n${card.desc}`, {
-        fontSize: '13px', color: '#88ccff', fontFamily: 'serif',
-        backgroundColor: '#1a1a2e', padding: { x: 12, y: 10 },
-        wordWrap: { width: 160 },
-      }).setInteractive({ useHandCursor: true });
+    // 📱 Mobile: vertical layout; Desktop: horizontal layout
+    const isMobile = w <= 600;
+    const isPortrait = h > w;
+    const useVertical = isMobile || isPortrait;
 
-      box.on('pointerover', () => box.setColor('#ffcc44'));
-      box.on('pointerout', () => box.setColor('#88ccff'));
-      box.on('pointerdown', () => {
-        this.deck.push({ ...card });
-        this._proceed();
+    const cardChoices = this._pickCards(allCards, 3);
+    
+    if (useVertical) {
+      // Vertical layout for mobile
+      const cardW = Math.min(350, w - 40);
+      const cardGap = 15;
+      cardChoices.forEach((card, i) => {
+        const cy = yOff + i * 85;
+        const box = this.add.text(w / 2, cy, `${card.name} · 费用:${card.cost} · ${card.type === 'attack' ? '攻击' : card.type === 'skill' ? '技能' : '能力'}\n${card.desc}`, {
+          fontSize: '13px', color: '#88ccff', fontFamily: 'serif',
+          backgroundColor: '#1a1a2e', padding: { x: 12, y: 10 },
+          wordWrap: { width: cardW - 24 }, align: 'center',
+        }).setOrigin(0.5).setInteractive({ useHandCursor: true });
+
+        box.on('pointerover', () => box.setColor('#ffcc44'));
+        box.on('pointerout', () => box.setColor('#88ccff'));
+        box.on('pointerdown', () => {
+          this.deck.push({ ...card });
+          this._proceed();
+        });
       });
-      cx += 200;
-    });
-    yOff += 120;
+      yOff += 270; // 3 cards × 85px + margin
+    } else {
+      // Horizontal layout for desktop
+      let cx = w / 2 - 200;
+      cardChoices.forEach(card => {
+        const box = this.add.text(cx, yOff, `${card.name}\n费用:${card.cost} ${card.type === 'attack' ? '攻击' : card.type === 'skill' ? '技能' : '能力'}\n${card.desc}`, {
+          fontSize: '13px', color: '#88ccff', fontFamily: 'serif',
+          backgroundColor: '#1a1a2e', padding: { x: 12, y: 10 },
+          wordWrap: { width: 160 },
+        }).setInteractive({ useHandCursor: true });
+
+        box.on('pointerover', () => box.setColor('#ffcc44'));
+        box.on('pointerout', () => box.setColor('#88ccff'));
+        box.on('pointerdown', () => {
+          this.deck.push({ ...card });
+          this._proceed();
+        });
+        cx += 200;
+      });
+      yOff += 120;
+    }
 
     // Relic reward for elite/boss
     if (this.encounterType === 'elite' || this.encounterType === 'boss') {
