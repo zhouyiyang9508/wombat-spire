@@ -10,10 +10,14 @@ import { RestScene } from './scenes/RestScene.js';
 import { BreakthroughScene } from './scenes/BreakthroughScene.js';
 import { VictoryScene } from './scenes/VictoryScene.js';
 
+// 📱 Responsive canvas size based on screen orientation
+const isMobile = window.innerWidth < 768;
+const isPortrait = window.innerHeight > window.innerWidth;
+
 const config = {
   type: Phaser.AUTO,
-  width: 900,
-  height: 650,
+  width: isMobile && isPortrait ? 600 : 900,
+  height: isMobile && isPortrait ? 900 : 650,
   parent: 'game-container',
   backgroundColor: '#0a0a12',
   scene: [BootScene, MenuScene, MapScene, BattleScene, RewardScene, EventScene, ShopScene, RestScene, BreakthroughScene, VictoryScene],
