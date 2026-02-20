@@ -90,64 +90,81 @@ export class MenuScene extends Phaser.Scene {
       fontSize: `${labelSize}px`, color: '#888', fontFamily: 'serif',
     }).setOrigin(0.5);
 
-    const cardW = Math.floor(220 * scale);
-    const gap = Math.floor(30 * scale);
+    // 📱 Mobile: vertical layout; Desktop: horizontal layout
+    const isMobile = w < 600;
+    const cardW = isMobile ? Math.min(280, w - 40) : Math.floor(220 * scale);
+    const gap = isMobile ? 35 : Math.floor(30 * scale);
+    const cardH = isMobile ? 180 : Math.floor(320 * scale);
+    
     const totalW = classes.length * cardW + (classes.length - 1) * gap;
-    const baseX = (w - totalW) / 2;
+    const baseX = isMobile ? (w - cardW) / 2 : (w - totalW) / 2;
+    const baseY = isMobile ? 120 : 140;
 
     classes.forEach((cls, i) => {
-      const cx = baseX + i * (cardW + gap);
-      const cy = 140;
-      const cardH = Math.floor(320 * scale);
+      const cx = isMobile ? baseX : (baseX + i * (cardW + gap));
+      const cy = isMobile ? (baseY + i * (cardH + gap)) : baseY;
 
       const bg = this.add.rectangle(cx + cardW / 2, cy + cardH / 2, cardW, cardH, 0x1a1a2e)
         .setStrokeStyle(2, 0x444466);
 
-      const iconSize = Math.floor(40 * scale);
-      const nameSize = Math.floor(22 * scale);
-      const subSize = Math.floor(12 * scale);
-      const statSize = Math.floor(16 * scale);
-      const passiveSize = Math.floor(15 * scale);
+      const iconSize = isMobile ? 36 : Math.floor(40 * scale);
+      const nameSize = isMobile ? 20 : Math.floor(22 * scale);
+      const subSize = isMobile ? 11 : Math.floor(12 * scale);
+      const statSize = isMobile ? 15 : Math.floor(16 * scale);
+      const passiveSize = isMobile ? 14 : Math.floor(15 * scale);
 
-      this.add.text(cx + cardW / 2, cy + 20, cls.icon, {
+      // Layout: mobile uses tighter spacing
+      const yIcon = isMobile ? cy + 15 : cy + 20;
+      const yName = isMobile ? cy + 45 : cy + 65;
+      const yNameEn = cy + 90;
+      const yHP = isMobile ? cy + 75 : cy + 120;
+      const yPassiveName = isMobile ? cy + 105 : cy + 155;
+      const yPassiveDesc = isMobile ? cy + 130 : cy + 180;
+
+      this.add.text(cx + cardW / 2, yIcon, cls.icon, {
         fontSize: `${iconSize}px`,
       }).setOrigin(0.5);
 
-      this.add.text(cx + cardW / 2, cy + 65, cls.name, {
+      this.add.text(cx + cardW / 2, yName, cls.name, {
         fontSize: `${nameSize}px`, color: '#e8d5a3', fontFamily: 'serif', fontStyle: 'bold',
       }).setOrigin(0.5);
 
-      this.add.text(cx + cardW / 2, cy + 90, cls.nameEn, {
-        fontSize: `${subSize}px`, color: '#666', fontFamily: 'serif',
-      }).setOrigin(0.5);
+      // Desktop only: show English name
+      if (!isMobile) {
+        this.add.text(cx + cardW / 2, yNameEn, cls.nameEn, {
+          fontSize: `${subSize}px`, color: '#666', fontFamily: 'serif',
+        }).setOrigin(0.5);
+      }
 
-      this.add.text(cx + cardW / 2, cy + 120, `❤️ ${cls.hp} HP`, {
+      this.add.text(cx + cardW / 2, yHP, `❤️ ${cls.hp} HP`, {
         fontSize: `${statSize}px`, color: '#ff8888', fontFamily: 'serif',
       }).setOrigin(0.5);
 
       // Passive
-      this.add.text(cx + cardW / 2, cy + 155, `被动：${cls.passive.name}`, {
+      this.add.text(cx + cardW / 2, yPassiveName, `被动：${cls.passive.name}`, {
         fontSize: `${passiveSize}px`, color: '#ffcc44', fontFamily: 'serif', fontStyle: 'bold',
       }).setOrigin(0.5);
 
-      this.add.text(cx + cardW / 2, cy + 180, cls.passive.desc, {
+      this.add.text(cx + cardW / 2, yPassiveDesc, cls.passive.desc, {
         fontSize: `${subSize}px`, color: '#aaa', fontFamily: 'serif',
         wordWrap: { width: cardW - 20 }, align: 'center',
       }).setOrigin(0.5);
 
-      // Start deck summary
-      const deckNames = [
-        ...cls.startDeck.tagged.map(d => `${d.id}×${d.count}`),
-        ...cls.startDeck.common.map(d => `${d.id}×${d.count}`),
-      ].join('\n');
-      this.add.text(cx + cardW / 2, cy + 230, '起始卡组:', {
-        fontSize: `${subSize}px`, color: '#88aacc', fontFamily: 'serif',
-      }).setOrigin(0.5);
-      const deckSize = Math.floor(10 * scale);
-      this.add.text(cx + cardW / 2, cy + 260, deckNames, {
-        fontSize: `${deckSize}px`, color: '#777', fontFamily: 'serif',
-        wordWrap: { width: cardW - 16 }, align: 'center', lineSpacing: 2,
-      }).setOrigin(0.5);
+      // Start deck summary (desktop only to save space on mobile)
+      if (!isMobile) {
+        const deckNames = [
+          ...cls.startDeck.tagged.map(d => `${d.id}×${d.count}`),
+          ...cls.startDeck.common.map(d => `${d.id}×${d.count}`),
+        ].join('\n');
+        this.add.text(cx + cardW / 2, cy + 230, '起始卡组:', {
+          fontSize: `${subSize}px`, color: '#88aacc', fontFamily: 'serif',
+        }).setOrigin(0.5);
+        const deckSize = Math.floor(10 * scale);
+        this.add.text(cx + cardW / 2, cy + 260, deckNames, {
+          fontSize: `${deckSize}px`, color: '#777', fontFamily: 'serif',
+          wordWrap: { width: cardW - 16 }, align: 'center', lineSpacing: 2,
+        }).setOrigin(0.5);
+      }
 
       // Click area
       const hitArea = this.add.rectangle(cx + cardW / 2, cy + cardH / 2, cardW, cardH, 0x000000, 0)
