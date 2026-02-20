@@ -21,7 +21,7 @@ export class MapScene extends Phaser.Scene {
     this.cameras.main.setBackgroundColor('#0a0a16');
 
     if (!this.gameMap) {
-      this.gameMap = MapGenerator.generate(15);
+      this.gameMap = MapGenerator.generate(50);
     }
 
     // 📱 Responsive scaling (minimum 0.8 for very small screens)

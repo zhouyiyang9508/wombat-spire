@@ -1,15 +1,15 @@
 // MapGenerator.js - Generate random layered map
 export class MapGenerator {
   // nodeTypes: battle, elite, event, rest, shop, boss
-  static generate(floors = 15) {
+  static generate(floors = 50) {
     const map = [];
 
     for (let floor = 0; floor < floors; floor++) {
       const nodes = [];
       let nodeCount;
 
-      // Boss floors: single boss node
-      if (floor === 4 || floor === 9 || floor === 14) {
+      // Boss floors: every 10 floors (9, 19, 29, 39, 49)
+      if ((floor + 1) % 10 === 0) {
         nodes.push({ id: `${floor}-0`, floor, index: 0, type: 'boss', connections: [] });
         map.push(nodes);
         continue;
@@ -53,8 +53,8 @@ export class MapGenerator {
   static _randomNodeType(floor) {
     // First floor: always battle
     if (floor === 0) return 'battle';
-    // Floor before boss: mix of rest/shop
-    if (floor === 3 || floor === 8 || floor === 13) {
+    // Floor before boss (8, 18, 28, 38, 48): more rest/shop
+    if ((floor + 2) % 10 === 0) {
       const r = Math.random();
       return r < 0.4 ? 'rest' : r < 0.7 ? 'shop' : 'battle';
     }

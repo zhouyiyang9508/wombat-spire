@@ -113,11 +113,13 @@ export class RewardScene extends Phaser.Scene {
   }
 
   _proceed() {
-    // Check for realm breakthrough (after boss on floor 4, 9)
+    // Check for realm breakthrough (after boss on floor 9, 19, 29, 39)
     const floor = this.player.currentFloor;
-    if ((floor === 4 && this.player.realmIndex === 0) || (floor === 9 && this.player.realmIndex === 1)) {
+    if ((floor === 9 && this.player.realmIndex === 0) || 
+        (floor === 19 && this.player.realmIndex === 1) ||
+        (floor === 29 && this.player.realmIndex === 2)) {
       this.scene.start('BreakthroughScene', this.mapData);
-    } else if (floor === 14) {
+    } else if (floor === 49) {
       // Final boss defeated - victory!
       this.scene.start('VictoryScene', this.mapData);
     } else {
